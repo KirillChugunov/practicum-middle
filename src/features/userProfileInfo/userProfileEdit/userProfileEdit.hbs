@@ -1,0 +1,18 @@
+<div class="user-profile__container">
+    {{> UserProfileGoBack }}
+    <section class="user-profile__edit">
+        {{> UserProfileTitles name="Иван"}}
+        <form class="user-profile-edit__grid">
+            {{> UserProfileInputElement label="Почта" placeholder="pochta@yandex.ru" disabled=false type="email" }}
+            {{> UserProfileInputElement label="Логин" placeholder="ivanivanov" disabled=false type="text" }}
+            {{> UserProfileInputElement label="Имя" placeholder="Иван" disabled=false type="text" }}
+            {{> UserProfileInputElement label="Фамилия" placeholder="Иванов" disabled=false type="text" }}
+            {{> UserProfileInputElement label="Имя в чате" placeholder="Иван" disabled=false type="text" }}
+            {{> UserProfileInputElement label="Телефон" placeholder="+7(909)96730 30" disabled=false type="phone" }}
+        </form>
+        <div class="user-profile-edit__container">
+        {{> Button type="primary" label="Сохранить"}}
+        </div>
+    </section>
+</div>
+

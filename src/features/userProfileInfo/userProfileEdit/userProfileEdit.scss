@@ -1,0 +1,24 @@
+@import '../../../shared/constants/constants';
+
+.user-profile__container {
+  display: flex;
+  align-items: center;
+}
+
+.user-profile__edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.user-profile-edit__grid {
+  min-width: 50%;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.user-profile-edit__container {
+  margin-top:162px;
+  width:280px;
+}

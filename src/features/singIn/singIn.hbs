@@ -1,0 +1,17 @@
+<div class="container">
+    <form class="singIn-form">
+        <h1 class="singIn-title">Вход</h1>
+        <div class="singIn-input-group">
+        {{> Input label="Логин" placeholder="Логин"}}
+            {{> Input label="Почта" type="email"}}
+            {{> Input label="Логин" }}
+            {{> Input label="Имя" }}
+            {{> Input label="Фамилия" }}
+            {{> Input label="Телефон" type="phone" }}
+            {{> Input label="Пароль" type="password"}}
+            {{> Input label="Пароль(еще раз)" type="password"}}
+        </div>
+        {{> Button label="Зарегистрироваться" type="primary" }}
+        {{> Button label="Войти" type="link" }}
+    </form>
+</div>
