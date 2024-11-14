@@ -37,9 +37,9 @@
         </div>
             <form class="chat-section__form">
                 {{> AddFileDropDown }}
-                {{> IconButton buttonIcon="./src/assets/icons/clip.svg" }}
+                {{> IconButton buttonIcon="{{ import('/src/assets/icons/clip.svg') }}" }}
                 <input class="chat-section__input" placeholder="Сообщение" type="text" name="message">
-                {{> IconButton buttonIcon="./src/assets/icons/arrow.svg" direction="right" }}
+                {{> IconButton buttonIcon="{{ import('/src/assets/icons/arrow.svg') }}" }}
             </form>
     </div>
     {{else}}
