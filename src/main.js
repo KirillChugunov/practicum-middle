@@ -5,7 +5,6 @@ import * as Pages from './pages';
 import arrow from './assets/icons/arrow.svg'
 import profilePicture from './assets/icons/picture.svg'
 import chatListAvatar from './assets/icons/chatListAvatar.svg'
-import moreIcon from './assets/icons/moreIcon.svg'
 import messagePhotoSrc from './assets/icons/messageImg.svg'
 
 const messages = [
