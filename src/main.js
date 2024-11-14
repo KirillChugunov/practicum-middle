@@ -6,6 +6,12 @@ import arrow from './assets/icons/arrow.svg'
 import profilePicture from './assets/icons/picture.svg'
 import chatListAvatar from './assets/icons/chatListAvatar.svg'
 import messagePhotoSrc from './assets/icons/messageImg.svg'
+import photoVideoIcon from './assets/icons/photoVideo.svg'
+import fileIcon from './assets/icons/file.svg'
+import locationIcon from './assets/icons/location.svg'
+import plusIcon from './assets/icons/plusIcon.svg'
+import deletIcon from './assets/icons/deletIcon.svg'
+
 
 const messages = [
     {
@@ -28,11 +34,19 @@ const pages = {
     'chatList': [Pages.ChatListPage, {
         chatListAvatar: chatListAvatar,
         chat: true,
+        photoVideoIcon: photoVideoIcon,
+        fileIcon: fileIcon,
+        locationIcon: locationIcon,
+        deletIcon: deletIcon,
+        plusIcon: plusIcon,
         messages: messages
     }],
     'userProfile': [Pages.UserProfileInfoPage, {buttonIcon: arrow, profilePicture: profilePicture}],
     'userProfileEdit': [Pages.UserProfileEditPage, {buttonIcon: arrow, profilePicture: profilePicture}],
     'userProfilePasswordEdit': [Pages.UserProfilePasswordEditPage, {buttonIcon: arrow, profilePicture: profilePicture}],
+    "navigate": [Pages.NavigatePage],
+    "5xx": [Pages.ErrorPage],
+    "404": [Pages.NotFoundPage],
 };
 
 Object.entries(Shared).forEach(([name, template]) => {
@@ -49,7 +63,7 @@ function navigate(page) {
     container.innerHTML = temlpatingFunction(context);
 }
 
-document.addEventListener('DOMContentLoaded', () => navigate('chatList'));
+document.addEventListener('DOMContentLoaded', () => navigate('navigate'));
 
 document.addEventListener('click', e => {
     const page = e.target.getAttribute('page');
