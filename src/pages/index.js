@@ -4,3 +4,5 @@ export {UserProfileInfoPage} from './userProfileInfoPage'
 export { UserProfilePasswordEditPage } from './userProfilePasswordEditPage';
 export { UserProfileEditPage } from './UserProfileEditPage'
 export { ChatListPage } from './chatList'
+export {NotFoundPage } from './404'
+export {ErrorPage} from './5xx'

@@ -1,4 +1,2 @@
-export { Button } from './ui'
-export { Input } from './ui'
-export { IconButton } from './ui'
+export { Button, Input, IconButton, Modal} from './ui'
 import './constants';
