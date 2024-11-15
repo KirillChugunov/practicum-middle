@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import handlebars from 'vite-plugin-handlebars';
 
 export default defineConfig({
@@ -9,8 +9,14 @@ export default defineConfig({
     css: {
         preprocessorOptions: {
             scss: {
-                additionalData: `@use 'src/shared/constants/constants' as *;`,
+                api: 'modern',
+                additionalData: `@use '@/shared/constants/constants' as *;`,
             },
         },
     },
+    resolve: {
+        alias: {
+            '@': '/src',
+        }
+    }
 })
