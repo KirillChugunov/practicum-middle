@@ -34,7 +34,7 @@
   justify-content: center;
   align-items: center;
   height: 20px;
-  background: #3369f3;
+  background: $primary-blue;
   border-radius: 50%;
 }
 
@@ -43,5 +43,5 @@
   font-size: 11px;
   line-height: 109%;
   text-align: center;
-  color: #fff;
+  color: $primary-white;
 }
