@@ -15,3 +15,5 @@ v 0.1.0 - первый спринт.
 npm run dev - запуск dev версии
 npm run build - запуск сборки проекта
 npm run start - запуск собранной версии проекта.
+
+Ссылка на развернутый проект - https://chugunov-middle.netlify.app/
