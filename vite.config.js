@@ -4,7 +4,8 @@ import handlebars from 'vite-plugin-handlebars';
 export default defineConfig({
     plugins: [handlebars()],
     server: {
-        port: 3000
+        port: 3000,
+        strictPort: true,
     },
     css: {
         preprocessorOptions: {
