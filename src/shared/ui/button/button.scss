@@ -10,13 +10,13 @@
 }
 
 .button__primary {
-  background-color: $primary-blue;
-  color: $primary-white;
+  background-color: $secondary;
+  color: $primary;
   font-size: 13px;
 }
 
 .button__link {
-  color: $primary-blue;
+  color: $secondary;
   font-size: 11px;
   text-align: center;
 }
@@ -34,7 +34,7 @@
   width: 11px;
   height: 1.6px;
   position: relative;
-  background-color: $primary-white;
+  background-color: $primary;
 }
 
 .button-arrow__left::after,
@@ -42,7 +42,7 @@
 .button-arrow__right::after,
 .button-arrow__right::before {
   content: "";
-  background-color: $primary-white;
+  background-color: $primary;
   display: inline-block;
   width: 7px;
   height: 1.6px;
