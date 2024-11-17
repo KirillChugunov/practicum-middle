@@ -1,0 +1,22 @@
+.icon-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+ }
+
+.icon-direction__right {
+  transform: rotate(-180deg);
+}
+
+.icon-direction__bottom {
+  transform: rotate(-90deg);
+}
+
+.icon-direction__top {
+  transform: rotate(90deg);
+}

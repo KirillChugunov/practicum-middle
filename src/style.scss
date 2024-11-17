@@ -1,0 +1,91 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 13px;
+  text-align: left;
+  color: $text-primary;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: $secondary;
+  text-decoration: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+a:hover {
+  opacity: 0.5;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  color:$text-primary;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  color:$text-primary;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 13px;
+  margin: 0;
+  padding: 0;
+}
+
+small {
+  color: $text-secondary;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  color:$text-primary;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  max-width: 1280px;
+  min-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
