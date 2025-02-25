@@ -1,0 +1,47 @@
+.message {
+  height: max-content;
+}
+.message__my {
+  border-radius: 12px 12px 12px 0;
+  width: 45%;
+  justify-self: end;
+  background: #E4EDFD;
+}
+
+.message__incoming {
+  border-radius: 0 12px 12px 12px;
+  width: 45%;
+  justify-self: start;
+  background: #F8F8F8;
+}
+
+.message__text {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 1fr);
+  text-align: left;
+  padding: 11px;
+}
+
+.message__content {
+  text-align: left;
+}
+
+.message__timestamp {
+  justify-self: end;
+}
+
+.message__img {
+  position: relative;
+  width: max-content;
+}
+
+.message__timestamp-img {
+  position: absolute;
+  bottom: 13px;
+  right: 13px;
+  border-radius: 30px;
+  min-width: 37px;
+  min-height: 13px;
+  color: $primary;
+  background: rgba(82, 82, 82, 0.5);
+}

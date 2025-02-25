@@ -1,0 +1,134 @@
+.chat-section {
+  display: flex;
+  flex-direction: column;
+ }
+
+
+.chat-section__title-wrapper {
+  padding: 0 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.chat-section__titles {
+  padding: 10px 0;
+  border-bottom: solid 1px $border-primary;
+  display: flex;
+  align-items: center;
+}
+
+
+.chat-section__options {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+
+.chat-section__chat-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.chat-section__chat-window-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.chat-section__message-list {
+  flex-grow: 1;
+  padding: 30px;
+  display: grid;
+  gap: 30px;
+  grid-template-rows: min-content;
+}
+
+
+.chat-section__form {
+  position: relative;
+  padding: 11px 20px;
+  border-top: solid 1px rgba(234, 234, 234, 1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.chat-section__input {
+  width: 100%;
+  border-radius: 30px;
+  height: 32px;
+  background: #efefef;
+  outline: none;
+  border: none;
+  padding: 10px;
+}
+
+
+.chat-section__input:focus {
+  outline: none;
+}
+
+
+.chat-section__input::placeholder {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 100%;
+  color: #999;
+  text-align: center;
+}
+
+
+.contact-list {
+  width: 310px;
+  background: $primary-background;
+  border-right: solid 1px $border-primary;
+  padding: 10px;
+}
+
+
+.contact-list__profile-link {
+  text-align: right;
+  margin: 23px 0;
+  display: block;
+}
+
+
+.contact-list__search-input {
+  border-radius: 5px;
+  width: 290px;
+  height: 32px;
+  background: #efefef;
+  border: none;
+}
+
+
+.contact-list__search-input:focus {
+  outline: none;
+}
+.contact-list__search-input::placeholder {
+  color: $text-secondary;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 15px;
+}
+
+.contact-list__search-input {
+  border-radius: 5px;
+  width: 290px;
+  height: 32px;
+  background: #efefef;
+  border: none;
+}
+

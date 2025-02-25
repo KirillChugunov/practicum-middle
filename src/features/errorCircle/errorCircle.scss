@@ -1,0 +1,12 @@
+.error-circle {
+  height: 300px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  background: $text-secondary;
+  border-radius: 50%;
+  padding: 60px;
+}
+
+
