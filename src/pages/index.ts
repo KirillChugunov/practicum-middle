@@ -1,0 +1,11 @@
+export {LoginPage} from './loginPage'
+export {SingInPage} from './singInPage'
+export {UserProfileInfoPage} from './userProfileInfoPage'
+export {UserProfilePasswordEditPage} from './userProfilePasswordEditPage';
+export {UserProfileEditPage} from './userProfileEditPage'
+export {ChatListPage} from './chatList/index.ts'
+export {NotFoundPage} from './NotFoundPage/index.ts'
+export {Error5xxPage} from './5xx/index.ts'
+export {NavigatePage} from './navigatePage'
+
+

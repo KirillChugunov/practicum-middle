@@ -1,0 +1,22 @@
+
+.chat-section__titles {
+  padding: 10px 0;
+  border-bottom: solid 1px $border-primary;
+  display: flex;
+  align-items: center;
+}
+
+.chat-section__options {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.chat-section__title-wrapper {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+}
+
