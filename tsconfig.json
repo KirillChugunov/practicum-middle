@@ -9,6 +9,7 @@
     "moduleResolution": "node",
     "noImplicitAny": true,
     "sourceMap": true,
+    "strictNullChecks": true,
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
