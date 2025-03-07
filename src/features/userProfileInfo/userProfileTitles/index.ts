@@ -1,2 +1,2 @@
 import './userProfileTitles.scss'
-export { default as UserProfileTitles } from './userProfileTitles.ts';
+export { default as UserProfileTitles } from './userProfileTitles.ts'

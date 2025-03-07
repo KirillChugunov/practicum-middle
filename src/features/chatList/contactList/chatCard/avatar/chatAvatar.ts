@@ -1,17 +1,18 @@
-import {Block} from "@shared";
+import { Block } from '@shared'
 
 type TChatAvatar = {
-    avatar: string;
+  avatar: string
 }
+
 export default class ChatAvatar extends Block {
-    constructor(props:TChatAvatar) {
-        super("img", {
-            ...props,
-            className: "chatCard__avatar",
-            attrs: {
-                src: props.avatar,
-                alt: "аватар пользователя"
-            }
-        });
-    }
+  constructor(props: TChatAvatar) {
+    super('img', {
+      ...props,
+      className: 'chatCard__avatar',
+      attrs: {
+        src: props.avatar,
+        alt: 'аватар пользователя',
+      },
+    })
+  }
 }

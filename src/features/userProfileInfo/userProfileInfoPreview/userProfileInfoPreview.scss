@@ -33,7 +33,7 @@
 }
 
 .user-profile__item::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;
@@ -47,6 +47,5 @@
 }
 
 .user-profile__item_color-red {
- color: $text-error;
+  color: $text-error;
 }
-

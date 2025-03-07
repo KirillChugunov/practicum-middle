@@ -1,2 +1,2 @@
 import './message.scss'
-export { default as Message } from './message.ts';
+export { default as Message } from './message.ts'

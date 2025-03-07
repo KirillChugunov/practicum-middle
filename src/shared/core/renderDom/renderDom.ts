@@ -1,29 +1,29 @@
-import Block from "../block/block.ts";
+import Block from '../block/block.ts'
 
 export default function renderDOM(block: Block): void {
-  const root: HTMLElement | null = document.querySelector("#app");
+  const root: HTMLElement | null = document.querySelector('#app')
 
-  if (root) root.innerHTML = "";
-  const content = block.getContent();
+  if (root) root.innerHTML = ''
+  const content = block.getContent()
 
   if (content && root) {
-    root.appendChild(content);
+    root.appendChild(content)
   }
 }
 
 export function render(query: string, block: Block): HTMLElement | null {
-  const root = document.querySelector(query);
+  const root = document.querySelector(query)
 
   if (!(root instanceof HTMLElement)) {
-      return null;
+    return null
   }
 
-  const content = block.getContent();
+  const content = block.getContent()
 
   if (content) {
-    root.appendChild(content);
+    root.appendChild(content)
   }
-  block.dispatchComponentDidMount();
+  block.dispatchComponentDidMount()
 
-  return root;
+  return root
 }

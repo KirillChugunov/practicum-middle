@@ -3,5 +3,3 @@ export { Input } from './input'
 export { IconButton } from './iconButton'
 export { Modal } from './modal'
 export { InputField } from './inputField'
-
-

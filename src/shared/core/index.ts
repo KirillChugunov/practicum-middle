@@ -1,2 +1,2 @@
-export {Block} from './block';
-export { FormManager } from './formManager';
+export { Block } from './block'
+export { FormManager } from './formManager'

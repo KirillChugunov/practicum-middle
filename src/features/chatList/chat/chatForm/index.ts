@@ -1,2 +1,2 @@
-import "./chatForm.scss"
-export { default as ChatForm } from "./chatForm";
+import './chatForm.scss'
+export { default as ChatForm } from './chatForm'

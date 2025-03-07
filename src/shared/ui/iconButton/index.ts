@@ -1,2 +1,2 @@
 import './iconButton.scss'
-export { default as IconButton } from './iconButton.ts';
+export { default as IconButton } from './iconButton.ts'

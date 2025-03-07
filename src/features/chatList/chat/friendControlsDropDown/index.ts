@@ -1,2 +1,2 @@
 import './friendControls.scss'
-export { default as FriendControlDropDown } from './friendControlDropDown.ts';
+export { default as FriendControlDropDown } from './friendControlDropDown.ts'

@@ -1,1 +1,1 @@
-export {default as ChatModalContent} from './ModalConent.ts'
+export { default as ChatModalContent } from './ModalConent.ts'

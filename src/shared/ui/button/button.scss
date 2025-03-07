@@ -41,7 +41,7 @@
 .button-arrow__left::before,
 .button-arrow__right::after,
 .button-arrow__right::before {
-  content: "";
+  content: '';
   background-color: $primary;
   display: inline-block;
   width: 7px;

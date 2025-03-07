@@ -1,2 +1,2 @@
 import './userProfileGoBack.scss'
-export { default as UserProfileEditGoBack } from './userProfileEditGoBack.ts';
+export { default as UserProfileEditGoBack } from './userProfileEditGoBack.ts'

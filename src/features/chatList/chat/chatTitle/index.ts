@@ -1,2 +1,2 @@
 import './chatTitle.scss'
-export { default as ChatTitle } from './chatTitle.ts';
+export { default as ChatTitle } from './chatTitle.ts'

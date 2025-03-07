@@ -17,8 +17,8 @@
   font-weight: 500;
   user-select: none;
   transition:
-          font-size 0.5s,
-          transform 0.5s;
+    font-size 0.5s,
+    transform 0.5s;
 }
 
 .input__element {
@@ -74,7 +74,7 @@
 }
 
 .profile__item::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;
@@ -96,9 +96,23 @@
   outline: none;
 }
 
-.profile::placeholder {
+.profile_input::placeholder {
   color: $text-secondary;
   font-size: 12px;
   font-weight: 500;
   line-height: 15px;
+}
+
+.profile_item_container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.input__error {
+  color: var(--error-color);
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

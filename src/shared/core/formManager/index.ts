@@ -1,1 +1,1 @@
-export {default as FormManager} from './formManager';
+export { default as FormManager } from './formManager'
