@@ -1,0 +1,33 @@
+.contact-list {
+  width: 310px;
+  background: $primary-background;
+  border-right: solid 1px $border-primary;
+  padding: 10px;
+}
+
+.contact-list__profile-link {
+  text-align: right;
+  margin: 23px 0;
+  display: block;
+}
+
+.contact-list__search-input {
+  border-radius: 5px;
+  width: 290px;
+  height: 32px;
+  background: #efefef;
+  border: none;
+}
+
+.contact-list__search-input:focus {
+  outline: none;
+}
+
+.contact-list__search-input::placeholder {
+  color: $text-secondary;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 15px;
+}
+
