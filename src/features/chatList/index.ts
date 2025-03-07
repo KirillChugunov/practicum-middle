@@ -1,4 +1,3 @@
-import './chatList.scss'
 export { default as ChatList } from './chatList.ts'
 export {
   Chat,
