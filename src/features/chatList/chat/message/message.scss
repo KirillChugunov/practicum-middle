@@ -2,6 +2,7 @@
   height: max-content;
   position: relative;
 }
+
 .message__my {
   border-radius: 12px 12px 12px 0;
   width: 45%;
@@ -10,7 +11,7 @@
 }
 
 .message__incoming {
-  border-radius: 0 12px 12px 12px;
+  border-radius: 0 12px 12px;
   width: 45%;
   justify-self: start;
   background: #f8f8f8;
@@ -44,5 +45,5 @@
   min-width: 37px;
   min-height: 13px;
   color: $primary;
-  background: rgba(82, 82, 82, 0.5);
+  background: rgb(82 82 82 / 50%);
 }
