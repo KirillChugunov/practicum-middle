@@ -16,10 +16,10 @@ export default class UserProfileTitles extends Block {
 
     render() {
         return `
-    <button className="user-profile_button">
-        <div className="overlay"></div>
-        <img className="user-profile__picture" alt="изображение профиля" src={{profilePicture }} >
-        <p className="text-overlay">Поменять аватар</p>
+    <button class="user-profile_button">
+        <div class="overlay"></div>
+        <img class="user-profile__picture" alt="изображение профиля" src={{profilePicture }} >
+        <p class="text-overlay">Поменять аватар</p> 
     </button>
     <h1>{{name }}</h1>
 

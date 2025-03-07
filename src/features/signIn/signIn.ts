@@ -1,27 +1,33 @@
-import {Block, Button, FormManager, Input, InputField} from "@shared";
-
+import {Block, Button, FormManager, InputField} from "@shared";
+import EventBus from "@/shared/core/eventBus/eventBus.ts";
 
 export default class SignIn extends Block {
+    private eventBusInstance: EventBus<"submit">;
+
     constructor() {
+        const eventBus = new EventBus<"submit">();
         const formManager = new FormManager();
+
         super("form", {
             className: `signIn-form`,
             Login: new InputField({
                 label: "Логин",
                 name: "login",
                 type: "text",
+                eventBus: eventBus,
                 onBlur: (e: Event) => {
-                        if (this.children.Login instanceof Input) {
-                            formManager.validateField(e, this.children.Login);
-                        }
+                    if (this.children.Login instanceof InputField) {
+                        formManager.validateField(e, this.children.Login);
+                    }
                 }
             }),
             Email: new InputField({
                 label: "Почта",
                 type: "email",
                 name: "email",
+                eventBus: eventBus,
                 onBlur: (e: Event) => {
-                    if (this.children.Email instanceof Input) {
+                    if (this.children.Email instanceof InputField) {
                         formManager.validateField(e, this.children.Email);
                     }
                 }
@@ -30,8 +36,9 @@ export default class SignIn extends Block {
                 label: "Имя",
                 type: "text",
                 name: "first_name",
+                eventBus: eventBus,
                 onBlur: (e: Event) => {
-                    if (this.children.FirstName instanceof Input) {
+                    if (this.children.FirstName instanceof InputField) {
                         formManager.validateField(e, this.children.FirstName);
                     }
                 }
@@ -40,8 +47,9 @@ export default class SignIn extends Block {
                 label: "Фамилия",
                 type: "text",
                 name: "second_name",
+                eventBus: eventBus,
                 onBlur: (e: Event) => {
-                    if (this.children.SecondName instanceof Input) {
+                    if (this.children.SecondName instanceof InputField) {
                         formManager.validateField(e, this.children.SecondName);
                     }
                 }
@@ -50,8 +58,9 @@ export default class SignIn extends Block {
                 label: "Телефон",
                 type: "phone",
                 name: "phone",
+                eventBus: eventBus,
                 onBlur: (e: Event) => {
-                    if (this.children.Phone instanceof Input) {
+                    if (this.children.Phone instanceof InputField) {
                         formManager.validateField(e, this.children.Phone);
                     }
                 }
@@ -60,9 +69,10 @@ export default class SignIn extends Block {
                 label: "Пароль",
                 type: "password",
                 name: "password",
+                eventBus: eventBus,
                 onBlur: (e: Event) => {
-                    if (this.children.Phone instanceof Input) {
-                        formManager.validateField(e, this.children.Phone);
+                    if (this.children.Password instanceof InputField) {
+                        formManager.validateField(e, this.children.Password);
                     }
                 }
             }),
@@ -70,15 +80,25 @@ export default class SignIn extends Block {
                 label: "Зарегистрироваться",
                 variant: "primary",
                 type: "submit",
-                onClick: (e) => formManager.formSubmit(e)
+                onClick: (e: Event) => {
+                    e.preventDefault();
+                    this.eventBusInstance.emit("submit");
+                    formManager.formSubmit(e);
+                }
             }),
             ButtonRegisterLink: new Button({
                 label: "Войти",
                 type: "link",
-                variant: 'link',
-                onClick: (e) => console.log(e.target)
+                variant: "link",
+                onClick: (e: Event) => {
+                    e.preventDefault();
+                    this.eventBusInstance.emit("submit");
+                    formManager.formSubmit(e);
+                }
             })
         });
+
+        this.eventBusInstance = eventBus;
     }
 
     render() {
@@ -92,12 +112,11 @@ export default class SignIn extends Block {
                 {{{ SecondName }}}
                 {{{ Phone }}}
                 {{{ Password }}}
-                {{{ Password }}}
             </div>
             {{{ ButtonSubmitLogin }}}
             {{{ ButtonRegisterLink }}}
         </form>
     `;
     }
-
 }
+

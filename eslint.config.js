@@ -7,7 +7,7 @@ import googleConfig from "eslint-config-google";
 export default [
   { files: ["**/*.{js,mjs,cjs,ts}"] },
   {
-    ignores: ["node_modules", "dist", "build", "src/assets", "src/shared/core/eventBus",  "src/shared/core/block"],
+    ignores: ["node_modules", "dist", "build", "src/assets"],
   },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
@@ -15,7 +15,8 @@ export default [
   {
     ...googleConfig,
     rules: {
-      "valid-jsdoc": "off", // Отключаем устаревшее правило
+      "valid-jsdoc": "off",
+      "@typescript-eslint/no-unsafe-function-type": "off"
     },
   },
 ];

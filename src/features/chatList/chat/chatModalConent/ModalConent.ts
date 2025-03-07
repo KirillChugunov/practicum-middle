@@ -6,7 +6,6 @@ export default class ChatModalContent extends Block {
         super("form", {
             Login: new InputField({
                 label: "Логин",
-                placeHolder: "Логин",
                 name: "login",
                 onBlur: (e: Event) => {
                     if (this.children.Login instanceof InputField)

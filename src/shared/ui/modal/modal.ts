@@ -2,7 +2,7 @@ import Block from "../../core/block/block.ts";
 
 
 type TModal = {
-    modalContent: HTMLElement;
+    modalContent: Block;
     modalTitle: string;
 
 }
@@ -19,7 +19,7 @@ export default class Modal extends Block {
         return `
             <div class="modal">
               <h2 class="modal__title">{{{props.modalTitle}}}</h2>
-          {{{ ModalContent  }}}
+              {{{ ModalContent  }}}
           </div>
     `;
     }

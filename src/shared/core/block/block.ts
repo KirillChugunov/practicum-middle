@@ -6,7 +6,7 @@ export interface Props {
   className?: string;
   attrs?: Record<string, string>;
   events?: Record<string, EventListener>;
-  [key: string]: any;
+  [key: string]: string | number | boolean | Record<string, unknown> | EventListener | undefined | any;
 }
 
 interface Children {
@@ -31,9 +31,9 @@ export default class Block {
   _id: string = nanoid(6);
   protected children: Children = {};
   props: Props;
-  private eventBus: () => EventBus<string>;
+  protected eventBus: () => EventBus<string>;
 
-  constructor(tagName: string = "div", propsWithChildren: Record<string, any> = {}) {
+  constructor(tagName: string = "div", propsWithChildren: Record<string, unknown> = {}) {
     const eventBus = new EventBus();
     this.eventBus = () => eventBus;
 
@@ -78,7 +78,7 @@ export default class Block {
     this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
   }
 
-  private _getChildrenAndProps(propsAndChildren: Record<string, any>): { children: Children; props: Props } {
+  private _getChildrenAndProps(propsAndChildren: Record<string, unknown> = {}): { children: Children; props: Props } {
     const children: Children = {};
     const props: Props = {};
 
@@ -110,7 +110,7 @@ export default class Block {
 
   componentDidMount(oldProps?: Props): void {
     /// я так понимаю тут будет работа с апи
-    console.log(oldProps)
+    oldProps
   }
 
   dispatchComponentDidMount(): void {
@@ -127,7 +127,8 @@ export default class Block {
 
   componentDidUpdate(oldProps: Props, newProps: Props): boolean {
     ///и тут
-    console.log(oldProps, newProps)
+    oldProps
+    newProps
     return true;
   }
 

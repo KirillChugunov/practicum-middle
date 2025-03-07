@@ -29,8 +29,11 @@ class FormManager {
     }
 
     validateField(event: Event, inputBlock: Block) {
-        console.log(event.target)
         const input = event.target as HTMLInputElement;
+        if (!input) {
+            inputBlock.setProps({ error: "Поле не должно быть пустым." });
+            return;
+        }
         const value = input.value;
         const name = input.name;
         let error = "";
@@ -41,6 +44,8 @@ class FormManager {
             login: /^(?=.*[A-Za-z])[A-Za-z0-9_-]{3,20}$/,
             email: /^[A-Za-z0-9._-]+@[A-Za-z0-9_-]+\.[A-Za-z]+$/,
             password: /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,40}$/,
+            oldPassword: /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,40}$/,
+            newPassword: /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,40}$/,
             phone: /^\+?\d{10,15}$/,
         };
 
@@ -59,7 +64,7 @@ class FormManager {
             error = errorMessages[name] || "Некорректное значение.";
         }
 
-        inputBlock.setProps({error}); // Передача ошибки в инпут
+        inputBlock.setProps({error});
         this.setField(name, value, error);
     }
 
@@ -69,8 +74,9 @@ class FormManager {
 
     formSubmit(e: Event) {
         e.preventDefault();
+        const hasEmptyFields = Object.values(this.state.formState).some((value) => !value.trim());
         const hasErrors = Object.values(this.state.errors).some((error) => error.length > 0);
-        if (!hasErrors) {
+        if (!hasErrors && !hasEmptyFields) {
             console.log("form valid:", this.state.formState);
         } else {
             console.log("form invalid:", this.state.errors);

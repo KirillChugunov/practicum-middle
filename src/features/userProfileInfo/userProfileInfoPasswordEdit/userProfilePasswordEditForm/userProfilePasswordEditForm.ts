@@ -1,10 +1,13 @@
 import profilePicture from "../../../../assets/icons/picture.svg";
 import {Block, Button, FormManager, InputField} from "@shared";
 import {UserProfileEditGoBack, UserProfileTitles} from "@/features";
+import EventBus from "@/shared/core/eventBus/eventBus.ts";
 
 
 export default class UserProfilePasswordEdit extends Block {
+    private eventBusInstance: EventBus<"submit">;
     constructor() {
+        const eventBus = new EventBus<"submit">();
         const formManager = new FormManager();
         super("form", {
             className: `user-profile-password-edit__grid`,
@@ -20,7 +23,8 @@ export default class UserProfilePasswordEdit extends Block {
                     if (this.children.Password instanceof InputField)
                        formManager.validateField(e, this.children.Password);
                 },
-                name: "oldPassword"
+                name: "oldPassword",
+                eventBus: eventBus,
             }),
             Password: new InputField({
                 label: "Пароль",
@@ -29,28 +33,31 @@ export default class UserProfilePasswordEdit extends Block {
                     if (this.children.Password instanceof InputField)
                        formManager.validateField(e, this.children.Password);
                 },
-                name: "newPassword"
+                name: "newPassword",
+                eventBus: eventBus,
             }),
             ButtonSubmitEdit: new Button({
                 label: "Сохранить",
                 variant: "primary",
-                type: "submot",
-                onClick: (e) => formManager.formSubmit(e)
-            }),
-
+                type: "submit",
+                onClick: (e: Event) => {
+                    e.preventDefault();
+                    this.eventBusInstance.emit("submit");
+                    formManager.formSubmit(e);
+                }
+            })
         });
+        this.eventBusInstance = eventBus;
     }
 
     render() {
         return `
-        <form class="user-profile-password-edit__grid">
             {{{ OldPassword }}}
-                 {{{ Password }}}
-                      {{{ Password }}}
-                              <div class="user-profile-password-edit__container">
-           {{{ ButtonSubmitEdit }}}
-        </div>
-        </form>
+            {{{ Password }}}
+            {{{ Password }}}
+            <div class="user-profile-password-edit__container">
+                {{{ ButtonSubmitEdit }}}
+            </div>
     `
     }
 }

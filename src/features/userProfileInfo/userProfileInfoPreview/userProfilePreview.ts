@@ -15,69 +15,70 @@ export default class UserProfilePreview extends Block {
             }),
             Email: new InputField({
                 label: "Почта",
-                placeHolder: "Почта",
                 type: "email",
                 onBlur: (e: Event) => {
                     if (this.children.Email instanceof InputField)
                        formManager.validateField(e, this.children.Email);
                 },
                 name: "email",
+                placeHolder: "Почта",
                 disabled: true
             }),
             Login: new InputField({
                 label: "Логин",
-                placeHolder: "Логин",
                 name: "login",
                 onBlur: (e: Event) => {
                     if (this.children.Login instanceof InputField)
                        formManager.validateField(e, this.children.Login);
                 },
                 type: "text",
-                disabled: true
+                disabled: true,
+                placeHolder: "Логин",
+
             }),
             FirstName: new InputField({
                 label: "Имя",
-                placeHolder: "Имя",
                 type: "text",
                 onBlur: (e: Event) => {
                     if (this.children.FirstName instanceof InputField)
                        formManager.validateField(e, this.children.FirstName);
                 },
                 name: "first_name",
-                disabled: true
+                disabled: true,
+                placeHolder: "Имя",
             }),
             SecondName: new InputField({
                 label: "Фамилия",
-                placeHolder: "Фамилия",
                 type: "text",
                 onBlur: (e: Event) => {
                     if (this.children.SecondName instanceof InputField)
                        formManager.validateField(e, this.children.SecondName);
                 },
                 name: "second_name",
-                disabled: true
+                disabled: true,
+                placeHolder: "Фамилия",
             }),
             ChatName: new InputField({
                 label: "Имя в чате",
-                placeHolder: "Иван",
                 type: "text",
                 onBlur: (e: Event) => {
                     if (this.children.ChatName instanceof InputField)
                        formManager.validateField(e, this.children.ChatName);
                 },
                 name: "display_name",
-                disabled: true
+                disabled: true,
+                placeHolder: "Имя в чате",
             }),
             Phone: new InputField({
                 label: "Телефон",
-                placeHolder: "phone",
                 type: "phone",
                 onBlur: (e: Event) => {
                     if (this.children.Phone instanceof InputField)
                        formManager.validateField(e, this.children.Phone);
                 },
                 name: "phone",
-                disabled: true
+                disabled: true,
+                placeHolder: "Телефон",
             }),
             ButtonSubmitEdit: new Button({
                 label: "Сохранить",
@@ -91,9 +92,8 @@ export default class UserProfilePreview extends Block {
     render() {
         return `
                {{{ GoBackButton  }}}
-    {{{ UserProfileGoBack  }}}
     <section class="user-profile__info">
-        {{{ UserProfileTitles name="Иван" }}}
+            {{{ ProfileTitles  }}}
         <form class="user-profile-password-edit__grid">
             {{{ Email }}}
             {{{ Login  }}}

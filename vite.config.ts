@@ -1,5 +1,4 @@
 import { defineConfig } from 'vite';
-import handlebars from 'vite-plugin-handlebars';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -7,7 +6,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig({
-    plugins: [handlebars()],
     server: {
         port: 3000,
     },
@@ -26,7 +24,6 @@ export default defineConfig({
             '@shared': path.resolve(__dirname, 'src/shared'),
             '@pages': path.resolve(__dirname, 'src/pages'),
             '@assets': path.resolve(__dirname, 'src/assets'),
-
         }
     }
 });

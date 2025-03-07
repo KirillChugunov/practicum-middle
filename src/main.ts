@@ -46,7 +46,7 @@ Object.entries(Features).forEach(([name, template]) => {
 function navigate(page: keyof PagesMap) {
     const [source] = pages[page];
     if (typeof source === "function") {
-        renderDOM(new source({}));
+        renderDOM(new source());
         return;
     }
 
@@ -59,7 +59,7 @@ function navigate(page: keyof PagesMap) {
 document.addEventListener("DOMContentLoaded", () => navigate("navigate"));
 
 document.addEventListener("click", (e) => {
-    //@ts-ignore
+    //@ts-expect-error заглушка до реализация роутов.
     const page = e.target.getAttribute("page");
     if (page) {
         navigate(page);
