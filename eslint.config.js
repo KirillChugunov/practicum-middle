@@ -7,7 +7,7 @@ import googleConfig from 'eslint-config-google'
 export default [
   { files: ['**/*.{js,mjs,cjs,ts}'] },
   {
-    ignores: ['node_modules', 'dist', 'build', 'src/assets'],
+    ignores: ['node_modules', 'dist', 'build', 'src/assets', '.github'],
   },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
