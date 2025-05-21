@@ -1,20 +1,57 @@
-<div class="user-profile__container">
-    {{> UserProfileGoBack }}
-    <section class="user-profile__info">
-        {{> UserProfileTitles name="Иван"}}
-        <form class="user-profile-password-edit__grid">
-            {{> UserProfileInputElement label="Почта" placeholder="pochta@yandex.ru" disabled=true type="email" name="email"}}
-            {{> UserProfileInputElement label="Логин" placeholder="ivanivanov" disabled=true type="text" name="login" }}
-            {{> UserProfileInputElement label="Имя" placeholder="Иван" disabled=true type="text" name="first_name" }}
-            {{> UserProfileInputElement label="Фамилия" placeholder="Иванов" disabled=true type="text" name="second_name"}}
-            {{> UserProfileInputElement label="Имя в чате" placeholder="Иван" disabled=true type="text" name="display_name"}}
-            {{> UserProfileInputElement label="Телефон" placeholder="+7(909)96730 30" disabled=true type="phone" name="phone" }}
-        </form>
-        <section class="user-profile__grid user_profile__actions">
-            <div class="user-profile__item"><a>Изменить данные</a> </div>
-            <div class="user-profile__item"><a>Изменить пароль</a></div>
-            <div class="user-profile__item"><a class="user-profile__item_color-red">Выйти</a></div>
-        </section>
+<div class='user-profile__container'>
+  {{{UserProfileGoBack}}}
+  <section class='user-profile__info'>
+    {{{UserProfileTitles name='Иван'}}}
+    <form class='user-profile-password-edit__grid'>
+      {{{UserProfileInputElement
+        label='Почта'
+        placeholder='pochta@yandex.ru'
+        disabled=true
+        type='email'
+        name='email'
+      }}}
+      {{{UserProfileInputElement
+        label='Логин'
+        placeholder='ivanivanov'
+        disabled=true
+        type='text'
+        name='login'
+      }}}
+      {{{UserProfileInputElement
+        label='Имя'
+        placeholder='Иван'
+        disabled=true
+        type='text'
+        name='first_name'
+      }}}
+      {{{UserProfileInputElement
+        label='Фамилия'
+        placeholder='Иванов'
+        disabled=true
+        type='text'
+        name='second_name'
+      }}}
+      {{{UserProfileInputElement
+        label='Имя в чате'
+        placeholder='Иван'
+        disabled=true
+        type='text'
+        name='display_name'
+      }}}
+      {{{UserProfileInputElement
+        label='Телефон'
+        placeholder='+7(909)96730 30'
+        disabled=true
+        type='phone'
+        name='phone'
+      }}}
+    </form>
+    <section class='user-profile__grid user_profile__actions'>
+      <div class='user-profile__item'><a>Изменить данные</a> </div>
+      <div class='user-profile__item'><a>Изменить пароль</a></div>
+      <div class='user-profile__item'><a
+          class='user-profile__item_color-red'
+        >Выйти</a></div>
     </section>
+  </section>
 </div>
-

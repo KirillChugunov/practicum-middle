@@ -1,0 +1,22 @@
+.friend-controls {
+  position: absolute;
+  bottom: -100px;
+  left: -140px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 15px;
+  box-shadow: 0 0 6px 0 rgb(0 0 0 / 14%);
+  background: $primary;
+  border-radius: 12px;
+  width: max-content;
+  height: 90px;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.friend-controls__option {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
