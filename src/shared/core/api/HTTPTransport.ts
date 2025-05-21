@@ -89,4 +89,5 @@ class HTTPTransport {
   }
 }
 
-export default HTTPTransport
+const httpTransport = new HTTPTransport();
+export default httpTransport

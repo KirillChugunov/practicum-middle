@@ -73,7 +73,7 @@ class FormManager {
     return this.state
   }
 
-  formSubmit(e: Event) {
+  async formSubmit(e: Event, callBack: () => void) {
     e.preventDefault()
     const hasEmptyFields = Object.values(this.state.formState).some(
       (value) => !value.trim(),
@@ -82,7 +82,7 @@ class FormManager {
       (error) => error.length > 0,
     )
     if (!hasErrors && !hasEmptyFields) {
-      console.log('form valid:', this.state.formState)
+    callBack(this.state.formState)
     } else {
       console.log('form invalid:', this.state.errors)
     }
