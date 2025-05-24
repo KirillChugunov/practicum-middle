@@ -6,7 +6,6 @@ import { apiConfig } from '@/shared/constants/api.ts'
 
 export default class SignIn extends Block {
   private eventBusInstance: EventBus<'submit'>
-
   async handleRegistration(formState: Record<string, string>) {
     try {
       const res = await httpTransport.post(
@@ -16,7 +15,7 @@ export default class SignIn extends Block {
         },
       )
       if (res.status === 200 || res.status === 201) {
-        router.go('chatList')
+        router.go('/chatList')
       } else {
         console.error('Регистрация не удалась:', res.status, res.responseText)
       }
@@ -24,7 +23,6 @@ export default class SignIn extends Block {
       console.error('Ошибка при регистрации:', error)
     }
   }
-
 
   constructor() {
     const eventBus = new EventBus<'submit'>()
@@ -113,7 +111,7 @@ export default class SignIn extends Block {
         variant: 'link',
         onClick: (e: Event) => {
           e.preventDefault()
-          router.go('login')
+          router.go('/')
         },
       }),
     })

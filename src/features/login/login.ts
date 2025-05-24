@@ -1,9 +1,28 @@
 import { Block, Button, FormManager, InputField } from '@shared'
 import EventBus from '@/shared/core/eventBus/eventBus.ts'
+import httpTransport from '@/shared/core/api/HTTPTransport.ts'
+import { apiConfig } from '@/shared/constants/api.ts'
+import router from '@/shared/core/router/router.ts'
 
 export default class Login extends Block {
   private eventBusInstance: EventBus<'submit'>
-
+  async handleLogin(formState: Record<string, string>) {
+    try {
+      const res = await httpTransport.post(
+        apiConfig.signIn,
+        {
+          data: formState,
+        },
+      )
+      if (res.status === 200 || res.status === 201) {
+        router.go('/chatlist')
+      } else {
+        console.error('Авторизация не удалась:', res.status, res.responseText)
+      }
+    } catch (error) {
+      console.error('Ошибка при авторизации:', error)
+    }
+  }
   constructor() {
     const eventBus = new EventBus<'submit'>()
     const formManager = new FormManager()
@@ -39,7 +58,7 @@ export default class Login extends Block {
         onClick: (e: Event) => {
           e.preventDefault()
           this.eventBusInstance.emit('submit')
-          formManager.formSubmit(e)
+          formManager.formSubmit(e, (formState) => this.handleLogin(formState))
         },
       }),
       ButtonRegisterLink: new Button({
@@ -48,8 +67,7 @@ export default class Login extends Block {
         type: 'link',
         onClick: (e: Event) => {
           e.preventDefault()
-          this.eventBusInstance.emit('submit')
-          formManager.formSubmit(e)
+          router.go('/singin')
         },
       }),
     })

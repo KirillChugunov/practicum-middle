@@ -10,16 +10,20 @@ type InputProps = {
 
 export default class Input extends Block {
   constructor(props: InputProps) {
-    super('input', {
-      ...props,
-      attrs: {
-        class: props.className,
-        ...(props.placeholder
-          ? { placeholder: props.placeholder }
-          : { placeholder: '' }),
-        name: props.name,
-        ...(props.disabled ? { disabled: true } : {}),
-      },
-    })
+    super('div', props)
+  }
+
+  render(): string {
+    return `
+      <p>{{placeHolder}}</p>
+      <input
+        class="{{className}}"
+        name="{{name}}"
+        placeholder="{{placeHolder}}"
+        type="{{type}}"
+        value="{{value}}"
+        {{#if disabled}}disabled{{/if}}
+      />
+    `
   }
 }

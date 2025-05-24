@@ -20,7 +20,7 @@ export default class ContactList extends Block {
 
   public render(): string {
     return `
-      <a class="contact-list__profile-link">
+      <a class="contact-list__profile-link" href="/userprofile">
         <small>Профиль ></small>
       </a>
       <form>

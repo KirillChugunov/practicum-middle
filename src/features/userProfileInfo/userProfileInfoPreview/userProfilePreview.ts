@@ -1,6 +1,8 @@
 import profilePicture from '../../../assets/icons/picture.svg'
 import { Block, Button, FormManager, InputField } from '@shared'
 import { UserProfileEditGoBack, UserProfileTitles } from '@/features'
+import httpTransport from '@/shared/core/api/HTTPTransport.ts'
+import { apiConfig } from '@/shared/constants/api.ts'
 
 export default class UserProfilePreview extends Block {
   constructor() {
@@ -13,7 +15,7 @@ export default class UserProfilePreview extends Block {
         profilePicture,
       }),
       Email: new InputField({
-        label: 'Почта',
+        label: 'email',
         type: 'email',
         onBlur: (e: Event) => {
           if (this.children.Email instanceof InputField)
@@ -93,6 +95,37 @@ export default class UserProfilePreview extends Block {
         },
       }),
     })
+    this.handleGetUserInfo()
+  }
+
+  user = {}
+
+  async handleGetUserInfo() {
+    const setInputProps = (input, props) => {
+      if (input instanceof InputField) {
+        input.setProps({ placeHolder: props })
+      }
+    }
+    try {
+      const res = await httpTransport.get(
+        apiConfig.getUserInfo,
+      )
+      if (res.status === 200 || res.status === 201) {
+        this.user = JSON.parse(res.responseText)
+        console.log('this.user', this.user)
+        console.log('childrem', this.children)
+        setInputProps(this.children.Email, this.user.email),
+          setInputProps(this.children.Login, this.user.Login),
+          setInputProps(this.children.FirstName, this.user.FirstName),
+          setInputProps(this.children.SecondName, this.user.SecondName),
+          setInputProps(this.children.ChatName, this.user.ChatName),
+          setInputProps(this.children.Phone, this.user.Phone)
+      } else {
+        console.error('Авторизация не удалась:', res.status, res.responseText)
+      }
+    } catch (error) {
+      console.error('Ошибка при авторизации:', error)
+    }
   }
 
   render() {
@@ -109,8 +142,8 @@ export default class UserProfilePreview extends Block {
           {{{ Phone }}}
         </form>
         <section class="user-profile__grid user_profile__actions">
-          <div class="user-profile__item"><a>Изменить данные</a></div>
-          <div class="user-profile__item"><a>Изменить пароль</a></div>
+          <div class="user-profile__item"><a href="/userprofileedit">Изменить данные</a></div>
+          <div class="user-profile__item"><a href="/userprofilepasswordedit">Изменить пароль</a></div>
           <div class="user-profile__item">
             <a class="user-profile__item_color-red">Выйти</a>
           </div>

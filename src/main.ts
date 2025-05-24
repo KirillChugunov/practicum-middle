@@ -26,9 +26,24 @@ const initRouter = () => {
     if (route === "login") {
       router.use("/", block)
     }
-    router.use(route, block)
+    console.log(route);
+    router.use(`/${route.toLowerCase()}`, block);
   }
   router.start()
 }
 initRouter();
 
+document.addEventListener('click', (event) => {
+  let target = event.target;
+  while (target && target !== document) {
+    if (target.tagName === 'A' && target.getAttribute('href')) {
+      const href = target.getAttribute('href');
+      if (href.startsWith('/')) {
+        event.preventDefault();
+        router.go(href);
+        return;
+      }
+    }
+    target = target.parentNode;
+  }
+});

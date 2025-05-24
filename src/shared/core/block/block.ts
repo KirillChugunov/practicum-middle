@@ -40,21 +40,14 @@ export default class Block {
   props: Props
   protected eventBus: () => EventBus<string>
 
-  constructor(
-    tagName: string = 'div',
-    propsWithChildren: Record<string, unknown> = {},
-  ) {
+  constructor(tagName: string = 'div', propsWithChildren: Record<string, unknown> = {}) {
     const eventBus = new EventBus()
     this.eventBus = () => eventBus
 
     const { props, children } = this._getChildrenAndProps(propsWithChildren)
     this.children = children
 
-    this._meta = {
-      tagName,
-      props,
-    }
-
+    this._meta = { tagName, props }
     this.props = this._makePropsProxy(props)
 
     this._registerEvents(eventBus)
@@ -71,6 +64,7 @@ export default class Block {
   private _createResources(): void {
     const { tagName, props } = this._meta!
     this._element = this._createDocumentElement(tagName)
+
     if (typeof props.className === 'string') {
       const classes = props.className.split(' ')
       this._element.classList.add(...classes)
@@ -88,25 +82,18 @@ export default class Block {
     this.eventBus().emit(Block.EVENTS.FLOW_RENDER)
   }
 
-  private _getChildrenAndProps(
-    propsAndChildren: Record<string, unknown> = {},
-  ): { children: Children; props: Props } {
+  private _getChildrenAndProps(propsAndChildren: Record<string, unknown> = {}): { children: Children; props: Props } {
     const children: Children = {}
     const props: Props = {}
 
     Object.entries(propsAndChildren).forEach(([key, value]) => {
       if (Array.isArray(value)) {
-        value.forEach((obj) => {
-          if (obj instanceof Block) {
-            children[key] = value
-          } else {
-            props[key] = value
-          }
-        })
-
-        return
-      }
-      if (value instanceof Block) {
+        if (value.every((v) => v instanceof Block)) {
+          children[key] = value as Block[]
+        } else {
+          props[key] = value
+        }
+      } else if (value instanceof Block) {
         children[key] = value
       } else {
         props[key] = value
@@ -118,38 +105,55 @@ export default class Block {
 
   private _componentDidMount(): void {
     this.componentDidMount()
+
+    Object.values(this.children).forEach((child) => {
+      if (Array.isArray(child)) {
+        child.forEach((component) => component.dispatchComponentDidMount())
+      } else {
+        child.dispatchComponentDidMount()
+      }
+    })
   }
 
-  componentDidMount(oldProps?: Props): void {
-    /// я так понимаю тут будет работа с апи
-    oldProps
-  }
+  componentDidMount(): void {}
 
   dispatchComponentDidMount(): void {
     this.eventBus().emit(Block.EVENTS.FLOW_CDM)
   }
 
   private _componentDidUpdate(oldProps: Props, newProps: Props): void {
-    const response = this.componentDidUpdate(oldProps, newProps)
-    if (!response) {
-      return
+    const shouldUpdate = this.componentDidUpdate(oldProps, newProps)
+    if (shouldUpdate) {
+      this._render()
     }
-    this._render()
   }
 
   componentDidUpdate(oldProps: Props, newProps: Props): boolean {
-    ///и тут
-    oldProps
-    newProps
     return true
   }
 
+  // 🔥 Рекурсивный setProps
   setProps(nextProps: Partial<Props>): void {
-    if (!nextProps) {
-      return
+    if (!nextProps) return
+
+    const oldProps = { ...this.props }
+    Object.assign(this.props, nextProps)
+
+    // Обновление DOM-атрибутов, если передан props.attrs
+    if (nextProps.attrs && this._element) {
+      Object.entries(nextProps.attrs).forEach(([key, value]) => {
+        this._element!.setAttribute(key, value)
+      })
     }
 
-    Object.assign(this.props, nextProps)
+    // 🔁 Рекурсивная передача пропсов в детей
+    Object.values(this.children).forEach((child) => {
+      if (Array.isArray(child)) {
+        child.forEach((component) => component.setProps(nextProps))
+      } else {
+        child.setProps(nextProps)
+      }
+    })
   }
 
   get element(): HTMLElement | null {
@@ -159,16 +163,16 @@ export default class Block {
   private _addEvents(): void {
     const { events = {} } = this.props
 
-    Object.keys(events).forEach((eventName) => {
-      this._element!.addEventListener(eventName, events[eventName])
+    Object.entries(events).forEach(([eventName, listener]) => {
+      this._element!.addEventListener(eventName, listener)
     })
   }
 
   private _removeEvents(): void {
     const { events = {} } = this.props
 
-    Object.keys(events).forEach((eventName) => {
-      this._element!.removeEventListener(eventName, events[eventName])
+    Object.entries(events).forEach(([eventName, listener]) => {
+      this._element!.removeEventListener(eventName, listener)
     })
   }
 
@@ -177,9 +181,7 @@ export default class Block {
 
     Object.entries(this.children).forEach(([key, child]) => {
       if (Array.isArray(child)) {
-        propsAndStubs[key] = child.map(
-          (component) => `<div data-id="${component._id}"></div>`,
-        )
+        propsAndStubs[key] = child.map((component) => `<div data-id="${component._id}"></div>`)
       } else {
         propsAndStubs[key] = `<div data-id="${child._id}"></div>`
       }
@@ -187,7 +189,6 @@ export default class Block {
 
     const fragment = this._createDocumentElement('template')
 
-    // Здесь нужно удостовериться, что fragment - это HTMLTemplateElement
     if (fragment instanceof HTMLTemplateElement) {
       const template = Handlebars.compile(this.render())
       fragment.innerHTML = template(propsAndStubs)
@@ -195,23 +196,14 @@ export default class Block {
       Object.values(this.children).forEach((child) => {
         if (Array.isArray(child)) {
           child.forEach((component) => {
-            const stub = fragment.content.querySelector(
-              `[data-id="${component._id}"]`,
-            )
-
+            const stub = fragment.content.querySelector(`[data-id="${component._id}"]`)
             const content = component.getContent()
-            if (stub && content) {
-              stub.replaceWith(content)
-            }
+            if (stub && content) stub.replaceWith(content)
           })
         } else {
-          const stub = fragment.content.querySelector(
-            `[data-id="${child._id}"]`,
-          )
+          const stub = fragment.content.querySelector(`[data-id="${child._id}"]`)
           const content = child.getContent()
-          if (stub && content) {
-            stub.replaceWith(content)
-          }
+          if (stub && content) stub.replaceWith(content)
         }
       })
 
@@ -223,12 +215,12 @@ export default class Block {
 
   private _render(): void {
     this._removeEvents()
-    const block = this._compile()
+    const fragment = this._compile()
 
     if (this._element!.children.length === 0) {
-      this._element!.appendChild(block)
+      this._element!.appendChild(fragment)
     } else {
-      this._element!.replaceChildren(block)
+      this._element!.replaceChildren(fragment)
     }
 
     this._addEvents()
@@ -244,18 +236,16 @@ export default class Block {
 
   private _makePropsProxy(props: Props): Props {
     const eventBus = this.eventBus()
-    const emitBind = eventBus.emit.bind(eventBus)
 
     return new Proxy(props, {
-      get(target, prop) {
+      get(target, prop: string) {
         const value = target[prop as keyof Props]
         return typeof value === 'function' ? value.bind(target) : value
       },
-      set(target, prop, value) {
-        const oldTarget = { ...target }
+      set(target, prop: string, value) {
+        const oldProps = { ...target }
         target[prop as keyof Props] = value
-
-        emitBind(Block.EVENTS.FLOW_CDU, oldTarget, target)
+        eventBus.emit(Block.EVENTS.FLOW_CDU, oldProps, target)
         return true
       },
       deleteProperty() {
@@ -265,11 +255,11 @@ export default class Block {
   }
 
   private _createDocumentElement(tagName: string): HTMLElement {
-    if (tagName === 'template') {
-      return document.createElement('template')
-    }
-    return document.createElement(tagName)
+    return tagName === 'template'
+      ? document.createElement('template')
+      : document.createElement(tagName)
   }
+
   show(): void {
     this.getContent()!.style.display = 'block'
   }

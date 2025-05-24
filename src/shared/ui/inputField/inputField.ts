@@ -16,6 +16,7 @@ type TInputFieldProps = {
 
 export default class InputField extends Block {
   constructor(props: TInputFieldProps) {
+    console.log("props.placeHolder", props.placeHolder)
     super('div', {
       ...props,
       className: props.profile ? 'profile_item_container' : 'input',
@@ -25,7 +26,6 @@ export default class InputField extends Block {
         events: {
           blur: props.onBlur,
         },
-        placeholder: props.placeHolder,
         name: props.name,
         disabled: props.disabled ?? false,
         className: props.profile ? 'profile_input' : 'input__element',
