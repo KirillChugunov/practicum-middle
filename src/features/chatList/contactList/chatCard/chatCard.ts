@@ -2,27 +2,27 @@ import { Block } from '@shared'
 import { ChatAvatar } from '@/features'
 
 type TChatCard = {
-  userName: string
-  avatar: string
+  userName: string | undefined
+  avatar: string | null
   lastMessagePreview: {
-    owner: string
-    message: string
-    timeStamp: string
-  }
-  newMessageCount: string
+    owner: string | undefined
+    message: string | undefined
+    timeStamp: string | undefined
+  } | undefined
+  newMessageCount: string | undefined
 }
 
 export default class ChatCard extends Block {
-  constructor(props: TChatCard) {
+  constructor(props: TChatCard & { onClick: () => void }) {
     super('div', {
       ...props,
       className: 'chatCard',
-      ChatAvatar: new ChatAvatar({
+      events: {
+        click: props.onClick, // 👈 ВАЖНО!
+      },
+      ChatAvatar: props.avatar && new ChatAvatar({
         avatar: props.avatar,
       }),
-      userName: props.userName,
-      lastMessagePreview: props.lastMessagePreview,
-      newMessageCount: props.newMessageCount,
     })
   }
 

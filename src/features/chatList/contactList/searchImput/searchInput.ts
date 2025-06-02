@@ -1,53 +1,58 @@
-import Block from '../../core/block/block.ts'
-import { Input } from '../input'
-import EventBus from '@/shared/core/eventBus/eventBus.ts'
+import EventBus from '@/shared/core/eventBus/eventBus.ts';
+import { throttle } from '@/shared/utils/throttle.ts';
+import { Block, Input } from '@shared'
 
-type TInputFieldProps = {
-  label: string
-  placeHolder?: string
-  name: string
-  type: string
-  disabled?: boolean
-  onBlur: (e: Event) => void
-  eventBus?: EventBus<'submit'>
-  profile?: boolean
-  className?: string
-}
+type TSearchInputProps = {
+  label: string;
+  placeHolder?: string;
+  name: string;
+  type?: string;
+  disabled?: boolean;
+  onSearch: (value: string) => void;
+  eventBus?: EventBus<'submit'>;
+  profile?: boolean;
+  className?: string;
+};
 
-export default class InputField extends Block {
-  constructor(props: TInputFieldProps) {
+export default class SearchInputField extends Block {
+  constructor(props: TSearchInputProps) {
+    const throttledSearch = throttle((e: Event) => {
+      const value = (e.target as HTMLInputElement).value.trim();
+      props.onSearch(value);
+    }, 1000);
+
     super('div', {
       ...props,
       className: props.profile ? 'profile_item_container' : 'input',
       error: '',
       Input: new Input({
         events: {
-          blur: props.onBlur,
+          input: throttledSearch,
         },
         name: props.name,
         disabled: props.disabled ?? false,
         className: props.profile ? 'profile_input' : 'input__element',
-        placeholder: props.placeHolder, // добавляем изначальный placeholder
+        placeholder: props.placeHolder,
       }),
-      type: props.type,
-    })
+      type: props.type ?? 'search',
+    });
 
     props.eventBus?.on('submit', () => {
-      const inputElement = this.getContent()?.querySelector('input')
+      const inputElement = this.getContent()?.querySelector('input');
       if (inputElement) {
-        props.onBlur({ target: inputElement } as unknown as Event)
+        props.onSearch(inputElement.value.trim());
       }
-    })
+    });
   }
 
-  override componentDidUpdate(oldProps: any, newProps: any): boolean {
+  override componentDidUpdate(_oldProps: any, newProps: any): boolean {
     this.children.Input.setProps({
       attrs: {
         ...this.children.Input.props.attrs,
         placeholder: newProps.placeHolder,
       },
-    })
-    return true
+    });
+    return true;
   }
 
   public render(): string {
@@ -69,6 +74,6 @@ export default class InputField extends Block {
           {{#if error}}<p class="input__text-error">{{error}}</p>{{/if}}
         </div>
       {{/if }}
-    `
+    `;
   }
 }

@@ -1,5 +1,6 @@
 import { Block, Button, FormManager, InputField } from '@shared'
 import EventBus from '@/shared/core/eventBus/eventBus.ts'
+import userStore from '@/store/userStore/userStore.ts'
 
 export default class UserProfileEditForm extends Block {
   private eventBusInstance: EventBus<'submit'>
@@ -100,10 +101,28 @@ export default class UserProfileEditForm extends Block {
       }),
       profile: true,
     })
+    userStore.subscribe((user) => {
+      this.updateFields(user)
+    })
 
+    userStore.loadUser()
     this.eventBusInstance = eventBus
   }
-
+  private updateFields(user) {
+    const update = (input, value) => {
+      if (input instanceof InputField) {
+        input.setProps({
+          placeHolder: value,
+        })
+      }
+    }
+    update(this.children.Email, user.email)
+    update(this.children.Login, user.login)
+    update(this.children.FirstName, user.first_name)
+    update(this.children.SecondName, user.second_name)
+    update(this.children.ChatName, user.display_name)
+    update(this.children.Phone, user.phone)
+  }
   render() {
     return `
       {{{ Email }}}

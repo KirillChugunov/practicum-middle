@@ -15,4 +15,8 @@ export default class ChatAvatar extends Block {
       },
     })
   }
+
+  public render(): string {
+    return ''
+  }
 }

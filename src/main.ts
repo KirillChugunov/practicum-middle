@@ -1,5 +1,6 @@
 import * as Pages from './pages'
 import router from '@/shared/core/router/router.ts'
+import userStore from '@/store/userStore/userStore.ts'
 
 interface PagesMap {
   login: typeof Pages.LoginPage
@@ -32,7 +33,7 @@ const initRouter = () => {
   router.start()
 }
 initRouter();
-
+userStore.loadUser()
 document.addEventListener('click', (event) => {
   let target = event.target;
   while (target && target !== document) {

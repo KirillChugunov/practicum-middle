@@ -9,6 +9,10 @@
   padding: 30px;
   display: grid;
   gap: 30px;
+  height:85%;
+  min-height: 85%;
+  max-height: 85%;
+  overflow-y: scroll;
 }
 
 .chat-section__input {

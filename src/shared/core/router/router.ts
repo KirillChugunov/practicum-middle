@@ -32,6 +32,7 @@ class Router {
 
   _onRoute(pathname) {
     const route = this.getRoute(pathname);
+    console.log(pathname);
     if (!route) {
       return;
     }

@@ -2,9 +2,13 @@ import { Block, IconButton } from '@shared'
 import deleteIcon from '../../../../assets/icons/deletIcon.svg'
 import plusIcon from '../../../../assets/icons/plusIcon.svg'
 
+type TFriendControlDropDown = {
+  isOpen:boolean
+}
 export default class FriendControlDropDown extends Block {
-  constructor() {
+  constructor(props: TFriendControlDropDown) {
     super('div', {
+      ...props,
       className: 'chat-section__title-wrapper',
       AddUserButton: new IconButton({
         onClick: () => console.log('test'),
@@ -17,6 +21,22 @@ export default class FriendControlDropDown extends Block {
         alt: 'Иконка удаления',
       }),
     })
+  }
+  public componentDidMount(): void {
+    this.updateVisibility(false);
+  }
+
+  public componentDidUpdate(_oldProps: TFriendControlDropDown, newProps: TFriendControlDropDown): boolean {
+    this.updateVisibility(newProps.isOpen);
+    return true;
+  }
+
+  private updateVisibility(isOpen: boolean): void {
+    if (isOpen) {
+      this.show();
+    } else {
+      this.hide();
+    }
   }
 
   public render(): string {
