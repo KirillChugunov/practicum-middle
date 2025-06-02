@@ -82,7 +82,7 @@ class FormManager {
       (error) => error.length > 0,
     )
     if (!hasErrors && !hasEmptyFields) {
-    callBack(this.state.formState)
+console.log("test")
     } else {
       console.log('form invalid:', this.state.errors)
     }

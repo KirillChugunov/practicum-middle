@@ -114,13 +114,15 @@ class ChatStore extends Store<TChatStore> {
     }
   }
 
-  async fetchChatUsers(chatId: string) {
+  async fetchChatUsers(chatId: string): Promise<any[]> {
     try {
-      const res = await httpTransport.get(apiConfig.getChatUsers(chatId))
-      const users = JSON.parse(res.responseText)
-      this.setState({ ...this.getState(), chatUsers: users })
+      const res = await httpTransport.get(apiConfig.getChatUsers(chatId));
+      const users = JSON.parse(res.responseText);
+      this.setState({ ...this.getState(), chatUsers: users });
+      return users;
     } catch (e) {
-      console.error('Ошибка при загрузке пользователей чата:', e)
+      console.error('Ошибка при загрузке пользователей чата:', e);
+      return [];
     }
   }
 
@@ -146,7 +148,25 @@ class ChatStore extends Store<TChatStore> {
       return null
     }
   }
+  async searchUserByLogin(login: string): Promise<any[] | null> {
+    this.setLoading(true)
+    this.setError(null)
 
+    try {
+      const res = await httpTransport.post(apiConfig.searchUser, {
+        data: { login },
+      })
+
+      const users = JSON.parse(res.responseText)
+      return users
+    } catch (e: any) {
+      this.setError(e?.message ?? 'Ошибка поиска пользователя')
+      console.error('Ошибка при поиске пользователя:', e)
+      return null
+    } finally {
+      this.setLoading(false)
+    }
+  }
   selectChat(chatId: number) {
     this.setState({ ...this.getState(), selectedChatId: chatId })
   }

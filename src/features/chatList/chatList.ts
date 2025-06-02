@@ -7,7 +7,7 @@ export default class ChatList extends Block {
   public currentChatSpeakerAvatar: string | null = null;
 
   constructor() {
-    const chat = new Chat({ chatId: null, partnerName: "", partnerAvatar: "" });
+    const chat = new Chat({ chatId: null});
 
     const contactList = new ContactList({
       onChatSelect: (id: number, userName: string, avatar: string) => this.setChatInfo(id, userName,avatar ),
@@ -26,7 +26,7 @@ export default class ChatList extends Block {
     this.currentChatSpeakerUserName = avatar;
 
     if ( this.children.Chat instanceof Block )
-    this.children.Chat.setProps({ chatId: id, partnerName: userName, partnerAvatar: avatar });
+    this.children.Chat.setProps({ chatId: id });
   }
 
   public render(): string {

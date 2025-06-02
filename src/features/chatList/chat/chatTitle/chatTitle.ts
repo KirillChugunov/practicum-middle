@@ -9,43 +9,70 @@ type TChatUser = {
 
 type TChatTitleProps = {
   users: TChatUser[];
+  chatId: string;
+  onAddClick: () => void;
+  onDeleteClick: () => void;
 };
 
 export default class ChatTitle extends Block {
-  public isFriendControlDropDownOpen: boolean = false;
+  private isFriendControlDropDownOpen = false;
 
   constructor(props: TChatTitleProps) {
+    console.log(props, "props")
     const avatars = props.users.map(
-      (user, i) =>
+      (user) =>
         new ChatAvatar({
           avatar: user.avatar,
           className: 'chat-section__avatar',
         }),
     );
 
+    const dropDown = new FriendControlDropDown({
+      isOpen: false,
+      chatId: props.chatId,
+      onAddClick: props.onAddClick,
+      onDeleteClick: props.onDeleteClick,
+    });
+
+    const moreButton = new IconButton({
+      buttonIcon: './src/assets/icons/moreIcon.svg',
+      alt: 'More icon',
+      onClick: (e: Event) => {
+        e.preventDefault();
+        this.isFriendControlDropDownOpen = !this.isFriendControlDropDownOpen;
+        dropDown.setProps({ isOpen: this.isFriendControlDropDownOpen });
+      },
+    });
+
     super('div', {
       ...props,
       className: 'chat-section__title-wrapper',
       UserAvatars: avatars,
       UserNames: props.users.map((u) => u.first_name).join(', '),
-      DropDown: new FriendControlDropDown({ isOpen: false }),
-      MoreButton: new IconButton({
-        buttonIcon: './src/assets/icons/moreIcon.svg',
-        alt: 'More icon',
-        onClick: (e: Event) => this.toggleDropDown(e),
-      }),
+      DropDown: dropDown,
+      MoreButton: moreButton,
     });
   }
 
-  private toggleDropDown(e: Event): void {
-    e.preventDefault();
-    this.isFriendControlDropDownOpen = !this.isFriendControlDropDownOpen;
-    if (this.children.DropDown instanceof Block) {
-      this.children.DropDown.setProps({
-        isOpen: this.isFriendControlDropDownOpen,
+  public componentDidUpdate(oldProps: TChatTitleProps, newProps: TChatTitleProps): boolean {
+    if (oldProps.users !== newProps.users) {
+      const avatars = newProps.users.map(
+        (user) =>
+          new ChatAvatar({
+            avatar: user.avatar,
+            className: 'chat-section__avatar',
+          }),
+      );
+
+      this.setProps({
+        UserAvatars: avatars,
+        UserNames: newProps.users.map((u) => u.first_name).join(', '),
       });
     }
+
+    return true;
   }
+
 
   public render(): string {
     return `

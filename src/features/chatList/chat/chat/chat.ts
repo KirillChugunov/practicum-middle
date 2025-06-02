@@ -1,8 +1,14 @@
-import { Block } from '@shared';
-import { ChatTitle, EmptyChat, Message, ChatForm } from '@/features';
+import { Block, Modal } from '@shared';
+import {
+  ChatTitle,
+  EmptyChat,
+  Message,
+  ChatForm,
+} from '@/features';
 import { ChatWebSocket } from '@/shared/core/ws/ws.ts';
 import userStore from '@/store/userStore/userStore.ts';
 import chatStore from '@/store/chatStore/chatStore.ts';
+import { ChatModalContent } from '@/features/chatList/chat';
 
 type TChat = {
   chatId: string | null;
@@ -11,16 +17,40 @@ type TChat = {
 export default class Chat extends Block {
   private chatWS?: ChatWebSocket;
   private unsubscribe?: () => void;
+  private chatModal: Modal;
 
   constructor(props: TChat) {
+    const isActive = !!props.chatId;
+
+    const chatTitle = new ChatTitle({
+      users: [],
+      onAddClick: () => this.showModal(true),
+      onDeleteClick: () => this.showModal(false),
+    });
+
+    const chatForm = new ChatForm();
+    const emptyChat = new EmptyChat();
+
+    const chatModal = new Modal({
+      child: new ChatModalContent({
+        chatId: '',
+        isAdd: true,
+        isOpen: false,
+        onDone: () => chatModal.close(),
+      }),
+      onClose: () => chatModal.close(),
+    });
+
     super('section', {
       ...props,
       className: 'chat-section',
-      chat: !!props.chatId,
-      EmptyChat: new EmptyChat(),
-      ChatTitle: new ChatTitle({ users: [] }), // <- заглушка
-      ChatForm: new ChatForm(),
+      chat: isActive,
+      ChatTitle: chatTitle,
+      ChatForm: chatForm,
+      EmptyChat: emptyChat,
     });
+
+    this.chatModal = chatModal;
 
     if (props.chatId) {
       this.connect(props.chatId);
@@ -29,9 +59,15 @@ export default class Chat extends Block {
 
   public componentDidUpdate(oldProps: TChat, newProps: TChat): boolean {
     if (newProps.chatId && newProps.chatId !== oldProps.chatId) {
-      this.connect(newProps.chatId);
       this.setProps({ chat: true });
+
+      if (this.children.ChatTitle instanceof Block) {
+        this.children.ChatTitle.setProps({ chatId: newProps.chatId });
+      }
+
+      this.connect(newProps.chatId);
     }
+
     return true;
   }
 
@@ -67,11 +103,31 @@ export default class Chat extends Block {
 
     await chatStore.fetchChatUsers(chatId);
     const users = chatStore.getState().chatUsers;
-
     if (this.children.ChatTitle instanceof Block) {
-      this.children.ChatTitle.setProps({ users });
+      console.log("users", users)
+      this.children.ChatTitle.setProps({ users, chatId });
     }
   }
+
+  private showModal(isAdd: boolean) {
+    if (!this.props.chatId) return;
+
+    const modalContent = new ChatModalContent({
+      chatId: this.props.chatId,
+      isAdd,
+      isOpen: true,
+      onDone: () => this.chatModal.close(),
+    });
+
+    this.chatModal.setProps({ child: modalContent });
+    this.chatModal.open();
+  }
+
+  public componentWillUnmount(): void {
+    this.chatWS?.close();
+    this.unsubscribe?.();
+  }
+
   public render(): string {
     return `
       {{#if chat}}

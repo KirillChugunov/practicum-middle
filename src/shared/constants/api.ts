@@ -9,6 +9,7 @@ export const apiConfig = {
   deleteChat: baseApi + 'chats',
   addUsersToChat: baseApi + 'chats/users',
   removeUsersFromChat: baseApi + 'chats/users',
+  searchUser: baseApi + '/user/search',
   getChatUsers: (chatId: string) => `${baseApi}chats/${chatId}/users`,
   updateChatAvatar: baseApi + 'chats/avatar',
   getChatToken: (chatId: string) => `${baseApi}chats/token/${chatId}`,

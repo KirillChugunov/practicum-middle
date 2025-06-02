@@ -134,12 +134,10 @@ export default class Block {
   }
 
   componentDidUpdate(oldProps: Props, newProps: Props): boolean {
-    // ⬇️ универсальное обновление DOM-атрибутов
     if (this._element && this._meta?.tagName !== 'template') {
       const oldAttrs = oldProps.attrs ?? {}
       const newAttrs = newProps.attrs ?? {}
 
-      // Удаляем старые
       Object.keys(oldAttrs).forEach((key) => {
         if (!(key in newAttrs)) {
           this._element!.removeAttribute(key)
@@ -169,6 +167,21 @@ export default class Block {
     }
 
     return true
+  }
+  renderToRoot(rootId: string): void {
+    const targetRoot = document.getElementById(rootId);
+    if (!targetRoot) {
+      console.warn(`[Block]: Root element #${rootId} not found.`);
+      return;
+    }
+
+    this._removeEvents();
+    const fragment = this._compile();
+
+    this._element!.replaceChildren(fragment);
+    this._addEvents();
+
+    targetRoot.appendChild(this._element!);
   }
 
   setProps(nextProps: Partial<Props>): void {
