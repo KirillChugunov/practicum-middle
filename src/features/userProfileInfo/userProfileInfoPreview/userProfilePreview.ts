@@ -1,19 +1,24 @@
 import profilePicture from '../../../assets/icons/picture.svg'
 import { Block, Button, FormManager, InputField } from '@shared'
 import { UserProfileEditGoBack, UserProfileTitles } from '@/features'
+import userStore from '@/store/userStore/userStore.ts'
 
 export default class UserProfilePreview extends Block {
   constructor() {
     const formManager = new FormManager()
+
     super('div', {
       className: 'user-profile__container',
+
       GoBackButton: new UserProfileEditGoBack(),
+
       ProfileTitles: new UserProfileTitles({
         name: 'userName',
         profilePicture,
       }),
+
       Email: new InputField({
-        label: 'Почта',
+        label: 'email',
         type: 'email',
         onBlur: (e: Event) => {
           if (this.children.Email instanceof InputField)
@@ -24,6 +29,7 @@ export default class UserProfilePreview extends Block {
         disabled: true,
         profile: true,
       }),
+
       Login: new InputField({
         label: 'Логин',
         name: 'login',
@@ -36,6 +42,7 @@ export default class UserProfilePreview extends Block {
         placeHolder: 'Логин',
         profile: true,
       }),
+
       FirstName: new InputField({
         label: 'Имя',
         type: 'text',
@@ -48,6 +55,7 @@ export default class UserProfilePreview extends Block {
         placeHolder: 'Имя',
         profile: true,
       }),
+
       SecondName: new InputField({
         label: 'Фамилия',
         type: 'text',
@@ -60,6 +68,7 @@ export default class UserProfilePreview extends Block {
         placeHolder: 'Фамилия',
         profile: true,
       }),
+
       ChatName: new InputField({
         label: 'Имя в чате',
         type: 'text',
@@ -72,6 +81,7 @@ export default class UserProfilePreview extends Block {
         placeHolder: 'Имя в чате',
         profile: true,
       }),
+
       Phone: new InputField({
         label: 'Телефон',
         type: 'phone',
@@ -84,6 +94,7 @@ export default class UserProfilePreview extends Block {
         placeHolder: 'Телефон',
         profile: true,
       }),
+
       ButtonSubmitEdit: new Button({
         label: 'Сохранить',
         variant: 'primary',
@@ -93,6 +104,27 @@ export default class UserProfilePreview extends Block {
         },
       }),
     })
+
+    userStore.subscribe((user) => {
+      this.updateFields(user)
+    })
+
+  }
+
+  private updateFields(user) {
+    const update = (input, value) => {
+      if (input instanceof InputField) {
+        input.setProps({
+          placeHolder: value,
+        })
+      }
+    }
+    update(this.children.Email, user.email)
+    update(this.children.Login, user.login)
+    update(this.children.FirstName, user.first_name)
+    update(this.children.SecondName, user.second_name)
+    update(this.children.ChatName, user.display_name)
+    update(this.children.Phone, user.phone)
   }
 
   render() {
@@ -109,8 +141,8 @@ export default class UserProfilePreview extends Block {
           {{{ Phone }}}
         </form>
         <section class="user-profile__grid user_profile__actions">
-          <div class="user-profile__item"><a>Изменить данные</a></div>
-          <div class="user-profile__item"><a>Изменить пароль</a></div>
+          <div class="user-profile__item"><a href="/userprofileedit">Изменить данные</a></div>
+          <div class="user-profile__item"><a href="/userprofilepasswordedit">Изменить пароль</a></div>
           <div class="user-profile__item">
             <a class="user-profile__item_color-red">Выйти</a>
           </div>

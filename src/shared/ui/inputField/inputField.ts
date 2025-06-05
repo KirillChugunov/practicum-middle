@@ -19,16 +19,15 @@ export default class InputField extends Block {
     super('div', {
       ...props,
       className: props.profile ? 'profile_item_container' : 'input',
-      label: props.label,
       error: '',
       Input: new Input({
         events: {
           blur: props.onBlur,
         },
-        placeholder: props.placeHolder,
         name: props.name,
         disabled: props.disabled ?? false,
         className: props.profile ? 'profile_input' : 'input__element',
+        placeholder: props.placeHolder, // добавляем изначальный placeholder
       }),
       type: props.type,
     })
@@ -39,6 +38,16 @@ export default class InputField extends Block {
         props.onBlur({ target: inputElement } as unknown as Event)
       }
     })
+  }
+
+  override componentDidUpdate(oldProps: any, newProps: any): boolean {
+    this.children.Input.setProps({
+      attrs: {
+        ...this.children.Input.props.attrs,
+        placeholder: newProps.placeHolder,
+      },
+    })
+    return true
   }
 
   public render(): string {

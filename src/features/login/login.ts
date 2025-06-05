@@ -1,9 +1,10 @@
 import { Block, Button, FormManager, InputField } from '@shared'
 import EventBus from '@/shared/core/eventBus/eventBus.ts'
+import router from '@/shared/core/router/router.ts'
+import userStore from '@/store/userStore/userStore.ts'
 
 export default class Login extends Block {
   private eventBusInstance: EventBus<'submit'>
-
   constructor() {
     const eventBus = new EventBus<'submit'>()
     const formManager = new FormManager()
@@ -36,10 +37,16 @@ export default class Login extends Block {
         label: 'Авторизоваться',
         variant: 'primary',
         type: 'submit',
-        onClick: (e: Event) => {
-          e.preventDefault()
-          this.eventBusInstance.emit('submit')
-          formManager.formSubmit(e)
+        onClick: async (e: Event) => {
+          e.preventDefault();
+
+          this.eventBusInstance.emit('submit');
+
+          await formManager.formSubmit(e, async () => {
+            const { formState } = formManager.getState();
+            await userStore.login(formState);
+            router.go('/chatlist');
+          });
         },
       }),
       ButtonRegisterLink: new Button({
@@ -48,8 +55,7 @@ export default class Login extends Block {
         type: 'link',
         onClick: (e: Event) => {
           e.preventDefault()
-          this.eventBusInstance.emit('submit')
-          formManager.formSubmit(e)
+          router.go('/singin')
         },
       }),
     })

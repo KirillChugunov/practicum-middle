@@ -14,9 +14,7 @@ export default class Input extends Block {
       ...props,
       attrs: {
         class: props.className,
-        ...(props.placeholder
-          ? { placeholder: props.placeholder }
-          : { placeholder: '' }),
+        placeholder: props.placeholder ?? '',
         name: props.name,
         ...(props.disabled ? { disabled: true } : {}),
       },

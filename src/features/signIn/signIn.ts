@@ -1,13 +1,32 @@
 import { Block, Button, FormManager, InputField } from '@shared'
 import EventBus from '@/shared/core/eventBus/eventBus.ts'
+import httpTransport from '@/shared/core/api/HTTPTransport.ts'
+import router from '@/shared/core/router/router.ts'
+import { apiConfig } from '@/shared/constants/api.ts'
 
 export default class SignIn extends Block {
   private eventBusInstance: EventBus<'submit'>
+  async handleRegistration(formState: Record<string, string>) {
+    try {
+      const res = await httpTransport.post(
+        apiConfig.auth,
+        {
+          data: formState,
+        },
+      )
+      if (res.status === 200 || res.status === 201) {
+        router.go('/chatlist')
+      } else {
+        console.error('Регистрация не удалась:', res.status, res.responseText)
+      }
+    } catch (error) {
+      console.error('Ошибка при регистрации:', error)
+    }
+  }
 
   constructor() {
     const eventBus = new EventBus<'submit'>()
     const formManager = new FormManager()
-
     super('form', {
       className: 'signIn-form',
       Login: new InputField({
@@ -81,10 +100,12 @@ export default class SignIn extends Block {
         variant: 'primary',
         type: 'submit',
         onClick: (e: Event) => {
-          e.preventDefault()
-          this.eventBusInstance.emit('submit')
-          formManager.formSubmit(e)
-        },
+          this.eventBusInstance.emit('submit');
+          formManager.formSubmit(e, async () => {
+            const { formState } = formManager.getState();
+            await this.handleRegistration(formState);
+          });
+        }
       }),
       ButtonRegisterLink: new Button({
         label: 'Уже есть аккаунт? Войти',
@@ -92,8 +113,7 @@ export default class SignIn extends Block {
         variant: 'link',
         onClick: (e: Event) => {
           e.preventDefault()
-          this.eventBusInstance.emit('submit')
-          formManager.formSubmit(e)
+          router.go('/')
         },
       }),
     })

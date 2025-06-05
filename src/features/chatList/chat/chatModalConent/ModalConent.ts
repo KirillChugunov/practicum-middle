@@ -1,35 +1,83 @@
-import { Block, FormManager, InputField, Button } from '@shared'
+import { Block, FormManager, InputField, Button } from '@shared';
+import chatStore from '@/store/chatStore/chatStore.ts';
 
-export default class ChatModalContent extends Block {
-  constructor() {
-    const formManager = new FormManager()
+type TChatModalContent = {
+  isAdd: boolean;
+  chatId: string;
+  onDone?: () => void;
+};
 
+export default class AddUserModalContent extends Block {
+  private formManager = new FormManager();
+
+  constructor(props: TChatModalContent) {
     super('form', {
+      ...props,
+      className: 'chat-modal__form',
       Login: new InputField({
         label: 'Логин',
         name: 'login',
+        type: 'text',
         onBlur: (e: Event) => {
           if (this.children.Login instanceof InputField) {
-            formManager.validateField(e, this.children.Login)
+            this.formManager.validateField(e, this.children.Login);
           }
         },
-        type: 'text',
       }),
       ButtonSubmit: new Button({
-        label: 'Добавить',
+        label: props.isAdd ? 'Добавить' : 'Удалить',
         variant: 'primary',
         type: 'submit',
-        onClick: (e) => formManager.formSubmit(e),
+        onClick: (e: Event) => this.handleSubmit(e),
       }),
-    })
+    });
+  }
+
+  public componentDidUpdate(oldProps: TChatModalContent, newProps: TChatModalContent): boolean {
+    if (oldProps.isAdd !== newProps.isAdd && this.children.ButtonSubmit instanceof Button) {
+      this.children.ButtonSubmit.setProps({
+        label: newProps.isAdd ? 'Добавить' : 'Удалить',
+      });
+    }
+
+    return true;
+  }
+
+  private async handleSubmit(e: Event) {
+    e.preventDefault();
+
+    const isValid = this.formManager.formSubmit(e);
+    if (!isValid) return;
+
+    const login = this.formManager.getState().formState.login?.trim();
+    if (!login) return;
+
+    const { chatId, isAdd } = this.props;
+
+    try {
+      const users = await chatStore.searchUserByLogin(login);
+      const user = users?.find((u) => u.login === login)?.id;
+      if (!user) {
+        console.warn('Пользователь не найден');
+        return;
+      }
+
+      if (isAdd) {
+        await chatStore.addUsersToChat(chatId, [user]);
+      } else {
+        await chatStore.removeUsersFromChat(chatId, [user]);
+      }
+
+      this.props.onDone?.(); // Закрыть модалку через сервис
+    } catch (error) {
+      console.error('Ошибка при обновлении участников чата:', error);
+    }
   }
 
   render(): string {
     return `
-      <form>
-        {{{ ChatModalContent }}}
-        {{{ ButtonSubmit }}}
-      </form>
-    `
+      {{{ Login }}}
+      {{{ ButtonSubmit }}}
+    `;
   }
 }

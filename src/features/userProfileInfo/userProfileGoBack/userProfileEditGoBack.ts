@@ -1,5 +1,6 @@
 import GoBackIcon from '../../../assets/icons/arrow.svg'
 import { Block, IconButton } from '@shared'
+import router from '@/shared/core/router/router.ts'
 
 export default class UserProfileEditGoBack extends Block {
   constructor() {
@@ -9,7 +10,7 @@ export default class UserProfileEditGoBack extends Block {
         direction: 'left',
         alt: 'назад',
         buttonIcon: GoBackIcon,
-        onClick: () => console.log('test'),
+        onClick: () => router.back(),
       }),
     })
   }

@@ -57,6 +57,7 @@ class HTTPTransport {
       }
 
       const xhr = new XMLHttpRequest()
+      xhr.withCredentials = true
       const isGet = method === METHODS.GET
 
       xhr.open(
@@ -89,4 +90,5 @@ class HTTPTransport {
   }
 }
 
-export default HTTPTransport
+const httpTransport = new HTTPTransport();
+export default httpTransport
