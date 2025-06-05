@@ -1,0 +1,12 @@
+.drag-drop-input {
+  border: 2px dashed $secondary;
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-color);
+  transition: background-color 0.2s;
+
+  &.drag-over {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}

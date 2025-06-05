@@ -15,7 +15,7 @@ export default class SignIn extends Block {
         },
       )
       if (res.status === 200 || res.status === 201) {
-        router.go('/chatList')
+        router.go('/chatlist')
       } else {
         console.error('Регистрация не удалась:', res.status, res.responseText)
       }
@@ -100,10 +100,12 @@ export default class SignIn extends Block {
         variant: 'primary',
         type: 'submit',
         onClick: (e: Event) => {
-          e.preventDefault()
-          this.eventBusInstance.emit('submit')
-          formManager.formSubmit(e, (formState) => this.handleRegistration(formState))
-        },
+          this.eventBusInstance.emit('submit');
+          formManager.formSubmit(e, async () => {
+            const { formState } = formManager.getState();
+            await this.handleRegistration(formState);
+          });
+        }
       }),
       ButtonRegisterLink: new Button({
         label: 'Уже есть аккаунт? Войти',

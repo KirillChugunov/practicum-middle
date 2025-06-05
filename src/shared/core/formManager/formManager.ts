@@ -11,6 +11,7 @@ type ErrorMessages = {
 type FormData = {
   formState: Record<string, string>
   errors: Record<string, string>
+  isValid: boolean
 }
 
 class FormManager {
@@ -20,6 +21,7 @@ class FormManager {
     this.state = {
       formState: {},
       errors: {},
+      isValid: false
     }
   }
 
@@ -73,20 +75,33 @@ class FormManager {
     return this.state
   }
 
-  async formSubmit(e: Event, callBack: () => void) {
-    e.preventDefault()
+  async formSubmit(e: Event, callback: () => Promise<void>): Promise<boolean> {
+    e.preventDefault();
+
     const hasEmptyFields = Object.values(this.state.formState).some(
-      (value) => !value.trim(),
-    )
+      (value) => !value.trim()
+    );
+
     const hasErrors = Object.values(this.state.errors).some(
-      (error) => error.length > 0,
-    )
-    if (!hasErrors && !hasEmptyFields) {
-console.log("test")
-    } else {
-      console.log('form invalid:', this.state.errors)
+      (error) => error.length > 0
+    );
+
+    const isValid = !hasErrors && !hasEmptyFields;
+
+    if (!isValid) {
+      console.warn('Форма невалидна:', this.state.errors);
+      return false;
     }
+
+    try {
+      await callback(); // ⬅️ ждём async-колбэк
+    } catch (err) {
+      console.error('Ошибка в сабмит-колбэке:', err);
+    }
+
+    return true;
   }
+
 }
 
 export default FormManager

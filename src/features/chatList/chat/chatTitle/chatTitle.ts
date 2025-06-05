@@ -9,16 +9,13 @@ type TChatUser = {
 
 type TChatTitleProps = {
   users: TChatUser[];
-  chatId: string;
-  onAddClick: () => void;
-  onDeleteClick: () => void;
+  chatId: string | null;
 };
 
 export default class ChatTitle extends Block {
   private isFriendControlDropDownOpen = false;
 
   constructor(props: TChatTitleProps) {
-    console.log(props, "props")
     const avatars = props.users.map(
       (user) =>
         new ChatAvatar({
@@ -30,8 +27,6 @@ export default class ChatTitle extends Block {
     const dropDown = new FriendControlDropDown({
       isOpen: false,
       chatId: props.chatId,
-      onAddClick: props.onAddClick,
-      onDeleteClick: props.onDeleteClick,
     });
 
     const moreButton = new IconButton({
@@ -40,9 +35,15 @@ export default class ChatTitle extends Block {
       onClick: (e: Event) => {
         e.preventDefault();
         this.isFriendControlDropDownOpen = !this.isFriendControlDropDownOpen;
-        dropDown.setProps({ isOpen: this.isFriendControlDropDownOpen });
+        if (this.children.DropDown instanceof Block) {
+          this.children.DropDown.setProps({
+            isOpen: this.isFriendControlDropDownOpen,
+            chatId: this.props.chatId
+          });
+        }
       },
     });
+
 
     super('div', {
       ...props,
@@ -69,7 +70,9 @@ export default class ChatTitle extends Block {
         UserNames: newProps.users.map((u) => u.first_name).join(', '),
       });
     }
-
+    if (oldProps.chatId !== newProps.chatId && this.children.DropDown instanceof Block) {
+      this.children.DropDown.setProps({ chatId: newProps.chatId });
+    }
     return true;
   }
 

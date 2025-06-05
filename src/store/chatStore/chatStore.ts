@@ -174,6 +174,37 @@ class ChatStore extends Store<TChatStore> {
   resetStore() {
     this.setState(initialState)
   }
+
+  async uploadFile(file: File): Promise<{ id: number; path: string } | null> {
+    const formData = new FormData();
+    formData.append('resource', file);
+
+    try {
+      const res = await httpTransport.post(apiConfig.uploadFile, {
+        data: formData,
+        headers: {}, // Не указываем Content-Type, browser сам поставит multipart/form-data
+      });
+
+      const response = JSON.parse(res.responseText);
+      return response;
+    } catch (e) {
+      console.error('Ошибка при загрузке файла:', e);
+      return null;
+    }
+  }
+
+  async getFileById(id: string): Promise<Blob | null> {
+    try {
+      const res = await httpTransport.get(apiConfig.getFile(id), {
+        responseType: 'blob', // Обязательно для получения бинарных данных
+      });
+
+      return res.response as Blob;
+    } catch (e) {
+      console.error('Ошибка при получении файла:', e);
+      return null;
+    }
+  }
 }
 
 const chatStore = new ChatStore()

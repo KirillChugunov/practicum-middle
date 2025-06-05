@@ -4,11 +4,10 @@ import chatStore from '@/store/chatStore/chatStore.ts';
 type TChatModalContent = {
   isAdd: boolean;
   chatId: string;
-  isOpen: boolean;
   onDone?: () => void;
 };
 
-export default class ChatModalContent extends Block {
+export default class AddUserModalContent extends Block {
   private formManager = new FormManager();
 
   constructor(props: TChatModalContent) {
@@ -41,15 +40,7 @@ export default class ChatModalContent extends Block {
       });
     }
 
-    if (oldProps.isOpen !== newProps.isOpen) {
-      this.updateVisibility(newProps.isOpen);
-    }
-
     return true;
-  }
-
-  private updateVisibility(isOpen: boolean): void {
-    isOpen ? this.show() : this.hide();
   }
 
   private async handleSubmit(e: Event) {
@@ -63,21 +54,21 @@ export default class ChatModalContent extends Block {
 
     const { chatId, isAdd } = this.props;
 
-    if (!chatId) {
-      console.warn('chatId отсутствует при сабмите формы');
-      return;
-    }
-
     try {
-     const users = await chatStore.searchUserByLogin(login)
-      const user = users?.find(u => u.login === login).id;
+      const users = await chatStore.searchUserByLogin(login);
+      const user = users?.find((u) => u.login === login)?.id;
+      if (!user) {
+        console.warn('Пользователь не найден');
+        return;
+      }
+
       if (isAdd) {
         await chatStore.addUsersToChat(chatId, [user]);
       } else {
         await chatStore.removeUsersFromChat(chatId, [user]);
       }
 
-      this.props.onDone?.();
+      this.props.onDone?.(); // Закрыть модалку через сервис
     } catch (error) {
       console.error('Ошибка при обновлении участников чата:', error);
     }

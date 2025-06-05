@@ -1,14 +1,20 @@
 import { Block, FormManager, IconButton, Input } from '@shared';
 import { AddFileDropDown } from '@/features';
+import { ChatWebSocket } from '@/shared/core/ws/ws.ts';
+
+type TChatForm = {
+  chatWS: ChatWebSocket;
+};
 
 export default class ChatForm extends Block {
   public isFileDropDownOpen: boolean = false;
 
-  constructor() {
+  constructor(props: TChatForm) {
     const formManager = new FormManager();
 
-    const addFileDropDown: InstanceType<typeof AddFileDropDown> = new AddFileDropDown({
+    const addFileDropDown = new AddFileDropDown({
       isOpen: false,
+      chatWS: props.chatWS,
     });
 
     const addButton = new IconButton({
@@ -21,7 +27,11 @@ export default class ChatForm extends Block {
       buttonIcon: './src/assets/icons/arrow.svg',
       alt: 'Send icon',
       direction: 'right',
-      onClick: (e: Event) => formManager.formSubmit(e),
+      onClick: (e: Event) => {
+        e.preventDefault();
+        formManager.formSubmit(e);
+        this.eventBus().emit('submit');
+      },
     });
 
     const chatInput = new Input({
@@ -42,13 +52,22 @@ export default class ChatForm extends Block {
       SentButton: sentButton,
       ChatInput: chatInput,
     });
+
+    this.eventBus().on('submit', () => {
+      const message = formManager.getState().formState.message;
+      if (message) {
+        props.chatWS.sendText(message);
+        chatInput.setValue?.('');
+      }
+    });
   }
 
   private toggleDropDown(e: Event) {
     e.preventDefault();
     this.isFileDropDownOpen = !this.isFileDropDownOpen;
-    if (this.children.AddFileDropDown instanceof Block)
-    this.children.AddFileDropDown.setProps({ isOpen: this.isFileDropDownOpen });
+    if (this.children.AddFileDropDown instanceof Block) {
+      this.children.AddFileDropDown.setProps({ isOpen: this.isFileDropDownOpen });
+    }
   }
 
   public render(): string {

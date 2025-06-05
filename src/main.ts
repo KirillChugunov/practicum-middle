@@ -1,6 +1,8 @@
 import * as Pages from './pages'
 import router from '@/shared/core/router/router.ts'
 import userStore from '@/store/userStore/userStore.ts'
+import { Block, Modal } from '@shared'
+import modalService from '@/shared/core/modalService/modalService.ts'
 
 interface PagesMap {
   login: typeof Pages.LoginPage
@@ -48,3 +50,10 @@ document.addEventListener('click', (event) => {
     target = target.parentNode;
   }
 });
+
+const globalModal = new Modal({
+  onClose: () => modalService.close(),
+});
+
+modalService.register(globalModal);
+document.body.appendChild(globalModal.getContent()!);

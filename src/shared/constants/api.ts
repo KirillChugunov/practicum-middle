@@ -13,4 +13,6 @@ export const apiConfig = {
   getChatUsers: (chatId: string) => `${baseApi}chats/${chatId}/users`,
   updateChatAvatar: baseApi + 'chats/avatar',
   getChatToken: (chatId: string) => `${baseApi}chats/token/${chatId}`,
+  uploadFile: '/resources',
+  getFile: (id: string) => `/resources/${id}`,
 }

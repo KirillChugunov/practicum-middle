@@ -1,32 +1,26 @@
 import photoVideoIcon from '../../../../assets/icons/photoVideo.svg';
 import locationIcon from '../../../../assets/icons/location.svg';
 import fileIcon from '../../../../assets/icons/file.svg';
+
 import { Block, IconButton } from '@shared';
+import { ChatWebSocket } from '@/shared/core/ws/ws.ts';
 
 type TAddFileDropDown = {
   isOpen: boolean;
+  chatWS: ChatWebSocket;
+  openPhotoModal?: () => void;
+  openFileModal?: () => void;
+  openLocationModal?: () => void;
 };
 
 export default class AddFileDropDown extends Block {
   constructor(props: TAddFileDropDown) {
+    const iconButtons = AddFileDropDown.initButtons(props);
+
     super('div', {
       ...props,
       className: 'add-file',
-      PhotoButton: new IconButton({
-        buttonIcon: photoVideoIcon,
-        alt: 'Photo icon',
-        onClick: () => console.log('photo clicked'),
-      }),
-      FileButton: new IconButton({
-        buttonIcon: locationIcon,
-        alt: 'File icon',
-        onClick: () => console.log('file clicked'),
-      }),
-      LocationButton: new IconButton({
-        buttonIcon: fileIcon,
-        alt: 'Location icon',
-        onClick: () => console.log('location clicked'),
-      }),
+      ...iconButtons,
     });
   }
 
@@ -40,11 +34,38 @@ export default class AddFileDropDown extends Block {
   }
 
   private updateVisibility(isOpen: boolean): void {
-    if (isOpen) {
-      this.show();
-    } else {
-      this.hide();
-    }
+    isOpen ? this.show() : this.hide();
+  }
+
+  private static initButtons(props: TAddFileDropDown) {
+    return {
+      PhotoButton: new IconButton({
+        buttonIcon: photoVideoIcon,
+        alt: 'Photo icon',
+        onClick: (e) => {
+          e.preventDefault()
+          console.log("test")
+          console.log(props)
+          props.openPhotoModal?.();
+        },
+      }),
+
+      FileButton: new IconButton({
+        buttonIcon: locationIcon,
+        alt: 'File icon',
+        onClick: () => {
+          props.openFileModal?.();
+        },
+      }),
+
+      LocationButton: new IconButton({
+        buttonIcon: fileIcon,
+        alt: 'Location icon',
+        onClick: () => {
+          props.openLocationModal?.();
+        },
+      }),
+    };
   }
 
   public render(): string {

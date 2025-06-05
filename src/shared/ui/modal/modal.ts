@@ -2,19 +2,21 @@ import Block from '@/shared/core/block/block';
 import { Props } from '@/shared/core/block/block';
 
 interface ModalProps extends Props {
-  child: Block;
+  child?: Block;
   onClose?: () => void;
 }
 
 export default class Modal extends Block {
   constructor(props: ModalProps) {
-    const { child, className = '', onClose } = props;
+    const { className = '', onClose } = props;
+
     super('div', {
       className: `modal ${className}`,
-      child,
       events: {
         click: (e: Event) => {
-          if ((e.target as HTMLElement).classList.contains('modal')) {
+          const target = e.target as HTMLElement;
+          const content = this.getContent()?.querySelector('.modal__content');
+          if (content && !content.contains(target)) {
             onClose?.();
             this.hide();
           }
@@ -22,7 +24,9 @@ export default class Modal extends Block {
       },
     });
 
-    this.children.child = child;
+    if (props.child) {
+      this.children.child = props.child;
+    }
   }
 
   public setProps(nextProps: Partial<ModalProps>): void {
@@ -34,16 +38,6 @@ export default class Modal extends Block {
     }
   }
 
-  render(): string {
-    return `
-      <div class="modal__overlay">
-        <div class="modal__content">
-          {{{ child }}}
-        </div>
-      </div>
-    `;
-  }
-
   public open(): void {
     this.renderToRoot('modal-root');
     this.show();
@@ -52,8 +46,31 @@ export default class Modal extends Block {
   public close(): void {
     this.hide();
     const root = document.getElementById('modal-root');
-    if (root?.contains(this.getContent()!)) {
-      root.removeChild(this.getContent()!);
+    const content = this.getContent();
+    if (root && content && root.contains(content)) {
+      root.removeChild(content);
     }
+  }
+
+  public show(): void {
+    if (this.element) {
+      this.element.classList.add('modal--visible');
+    }
+  }
+
+  public hide(): void {
+    if (this.element) {
+      this.element.classList.remove('modal--visible');
+    }
+  }
+
+  render(): string {
+    return `
+      <div class="modal__overlay">
+        <div class="modal__content">
+          ${this.children.child ? '{{{ child }}}' : ''}
+        </div>
+      </div>
+    `;
   }
 }
