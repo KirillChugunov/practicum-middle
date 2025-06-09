@@ -1,112 +1,134 @@
-import { Block, Modal } from '@shared'
+import { Block, IconButton } from '@shared';
 import {
   ChatTitle,
   EmptyChat,
   Message,
   ChatForm,
-} from '@/features'
-import { ChatWebSocket } from '@/shared/core/ws/ws.ts'
-import userStore from '@/store/userStore/userStore.ts'
-import chatStore from '@/store/chatStore/chatStore.ts'
+  AddFileDropDown,
+} from '@/features';
+import { ChatMessage, ChatWebSocket } from '@/shared/core/ws/ws.ts';
+import userStore from '@/store/userStore/userStore.ts';
+import chatStore from '@/store/chatStore/chatStore.ts';
 
-type TChat = {
+type ChatProps = {
   chatId: string | null;
+  chat: boolean;
 };
 
-export default class Chat extends Block {
-  private chatWS?: ChatWebSocket
-  private unsubscribe?: () => void
+type ChatChildren = {
+  ChatTitle: ChatTitle;
+  EmptyChat: EmptyChat;
+  ChatForm: ChatForm;
+  AddFileDropDown: AddFileDropDown;
+  AddButton: IconButton;
+  Messages?: Block[]; // сообщения динамически создаются
+};
 
-  constructor(props: TChat) {
-    const isActive = !!props.chatId
+export default class Chat extends Block<ChatProps, ChatChildren> {
+  private chatWS?: ChatWebSocket;
+  private unsubscribe?: () => void;
+  private isFileDropDownOpen = false;
 
-    const chatTitle = new ChatTitle({
-      users: [],
-      chatId: props.chatId
-    })
+  constructor(props: { chatId: string | null }) {
+    const chatId = props.chatId;
+    const isActive = Boolean(chatId);
 
-    const chatForm = new ChatForm({
-      chatWS: undefined
+    const addFileDropDown = new AddFileDropDown({
+      isOpen: false,
+      chatWS: undefined,
     });
-    const emptyChat = new EmptyChat()
 
-   super('section', {
-      ...props,
-      className: 'chat-section',
+    const addButton = new IconButton({
+      buttonIcon: './src/assets/icons/clip.svg',
+      alt: 'Attachment icon',
+      onClick: (e: Event) => {
+        e.preventDefault();
+        this.toggleDropDown();
+      },
+    });
+
+    super('section', {
+      chatId,
       chat: isActive,
-      ChatTitle: chatTitle,
-      ChatForm: chatForm,
-      EmptyChat: emptyChat,
-    })
+      className: 'chat-section',
+      ChatTitle: new ChatTitle({ chatId }),
+      ChatForm: new ChatForm({ chatWS: undefined }),
+      EmptyChat: new EmptyChat(),
+      AddFileDropDown: addFileDropDown,
+      AddButton: addButton,
+    });
 
-    if (props.chatId) {
-      this.connectToChat(props.chatId)
+    if (isActive && chatId) {
+      this.connectToChat(chatId);
     }
   }
 
-  public componentDidUpdate(oldProps: TChat, newProps: TChat): boolean {
-    if (newProps.chatId && newProps.chatId !== oldProps.chatId) {
-      this.setProps({ chat: true })
+  override componentDidUpdate(
+    oldProps: ChatProps,
+    newProps: ChatProps
+  ): boolean {
+    const chatChanged = newProps.chatId && newProps.chatId !== oldProps.chatId;
 
-      if (this.children.ChatTitle instanceof Block) {
-        this.children.ChatTitle.setProps({ chatId: newProps.chatId })
+    if (chatChanged) {
+      this.setProps({ chat: true });
+
+      this.children.ChatTitle.setProps({ chatId: newProps.chatId });
+
+      if (newProps.chatId) {
+        this.connectToChat(newProps.chatId);
       }
-
-      this.connectToChat(newProps.chatId)
     }
 
-    return true
+    return true;
   }
 
-  private async connectToChat(chatId: string) {
-    this.chatWS?.close()
-    this.unsubscribe?.()
+  private toggleDropDown(): void {
+    this.isFileDropDownOpen = !this.isFileDropDownOpen;
+    this.children.AddFileDropDown.setProps({
+      isOpen: this.isFileDropDownOpen,
+    });
+  }
 
-    this.chatWS = new ChatWebSocket(chatId)
+  private async connectToChat(chatId: string): Promise<void> {
+    this.chatWS?.close();
+    this.unsubscribe?.();
 
-    if (this.children.ChatForm instanceof Block) {
-      this.children.ChatForm.setProps({
-        chatWS: this.chatWS
-      });
-    }
+    this.chatWS = new ChatWebSocket(chatId);
+
+    this.children.ChatForm.setProps({ chatWS: this.chatWS });
+    this.children.AddFileDropDown.setProps({ chatWS: this.chatWS });
 
     this.unsubscribe = this.chatWS.store.subscribe((state) => {
-      const currentUserId = userStore.getState().id
+      const currentUserId = userStore.getState().id;
 
       const messages = state.messages
-        .map((msg) => {
+        .map((msg: ChatMessage) => {
           try {
             return new Message({
               type: msg.type,
               owner: msg.user_id === currentUserId ? 'me' : 'partner',
               text: msg.content,
-              photo: msg.file?.path,
+              file: msg.file,
               timeStamp: msg.time,
-            })
+            });
           } catch (err) {
-            console.error('[Message render error]', err)
-            return null
+            console.error('[Message render error]', err);
+            return null;
           }
         })
-        .filter((msg): msg is Block => msg !== null)
+        .filter((msg): msg is Message => msg !== null) as Block[];
 
-      this.children.Messages = messages
-      this.forceUpdate()
-    })
+      this.children.Messages = messages;
+      this.forceUpdate();
+    });
 
-    await chatStore.fetchChatUsers(chatId)
-    const users = chatStore.getState().chatUsers
 
-    if (this.children.ChatTitle instanceof Block) {
-      this.children.ChatTitle.setProps({ users, chatId })
-    }
-  }
-  public componentWillUnmount(): void {
-    this.chatWS?.close()
-    this.unsubscribe?.()
+    await chatStore.fetchChatUsers(chatId);
+
+    this.children.ChatTitle.setProps({ chatId }); // удалили users
   }
 
-  public render(): string {
+  override render(): string {
     return `
       {{#if chat}}
         {{{ ChatTitle }}}
@@ -114,11 +136,15 @@ export default class Chat extends Block {
           <div class="chat-section__message-list">
             {{{ Messages }}}
           </div>
-          {{{ ChatForm }}}
+          {{{ AddFileDropDown }}}
+          <div class="chat-section__form-container">
+            {{{ AddButton }}}
+            {{{ ChatForm }}}
+          </div>
         </div>
       {{else}}
         {{{ EmptyChat }}}
       {{/if}}
-    `
+    `;
   }
 }

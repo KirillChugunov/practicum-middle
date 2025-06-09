@@ -1,79 +1,78 @@
 import { Block, FormManager, IconButton, Input } from '@shared';
-import { AddFileDropDown } from '@/features';
 import { ChatWebSocket } from '@/shared/core/ws/ws.ts';
 
-type TChatForm = {
-  chatWS: ChatWebSocket;
-};
+type ChatFormProps = {
+  chatWS?: ChatWebSocket;
+}
 
-export default class ChatForm extends Block {
-  public isFileDropDownOpen: boolean = false;
+type  ChatFormChildren = {
+  ChatInput: Input;
+  SentButton: IconButton;
+}
 
-  constructor(props: TChatForm) {
+export default class ChatForm extends Block<ChatFormProps, ChatFormChildren> {
+  private chatWS?: ChatWebSocket;
+
+  constructor(props: ChatFormProps) {
     const formManager = new FormManager();
 
-    const addFileDropDown = new AddFileDropDown({
-      isOpen: false,
-      chatWS: props.chatWS,
-    });
-
-    const addButton = new IconButton({
-      buttonIcon: './src/assets/icons/clip.svg',
-      alt: 'Attachment icon',
-      onClick: (e: Event) => this.toggleDropDown(e),
-    });
-
-    const sentButton = new IconButton({
-      buttonIcon: './src/assets/icons/arrow.svg',
-      alt: 'Send icon',
-      direction: 'right',
-      onClick: (e: Event) => {
-        e.preventDefault();
-        formManager.formSubmit(e);
-        this.eventBus().emit('submit');
-      },
-    });
-
-    const chatInput = new Input({
+    const ChatInput = new Input({
       className: 'chat-section__input',
       placeholder: 'Сообщение',
       name: 'message',
       events: {
         blur: (e: Event) => {
-          formManager.validateField(e, chatInput);
+          formManager.validateField(e, ChatInput);
         },
+        input: (e: Event) => {
+          formManager.validateField(e, ChatInput);
+        },
+      },
+    });
+
+    const SentButton = new IconButton({
+      buttonIcon: './src/assets/icons/arrow.svg',
+      alt: 'Send icon',
+      direction: 'right',
+      attrs: {
+        type: 'submit',
+      },
+      onClick: (e: Event): void => {
+        e.preventDefault();
+        this.eventBus().emit('submit');
       },
     });
 
     super('form', {
       className: 'chat-section__form',
-      AddFileDropDown: addFileDropDown,
-      AddButton: addButton,
-      SentButton: sentButton,
-      ChatInput: chatInput,
+      ChatInput,
+      SentButton,
+      chatWS: props.chatWS,
+      events: {
+        submit: (e: SubmitEvent): void => {
+          e.preventDefault();
+          this.eventBus().emit('submit');
+        },
+      },
     });
 
+    this.chatWS = props.chatWS;
+
     this.eventBus().on('submit', () => {
-      const message = formManager.getState().formState.message;
-      if (message) {
-        props.chatWS.sendText(message);
-        chatInput.setValue?.('');
+      const message = formManager.getState().formState.message?.trim();
+      if (message && this.chatWS) {
+        this.chatWS.sendText(message);
+
+        const inputEl = this.children.ChatInput.getContent() as HTMLInputElement | null;
+        if (inputEl) {
+          inputEl.value = '';
+        }
       }
     });
   }
 
-  private toggleDropDown(e: Event) {
-    e.preventDefault();
-    this.isFileDropDownOpen = !this.isFileDropDownOpen;
-    if (this.children.AddFileDropDown instanceof Block) {
-      this.children.AddFileDropDown.setProps({ isOpen: this.isFileDropDownOpen });
-    }
-  }
-
-  public render(): string {
+  override render(): string {
     return `
-      {{{ AddFileDropDown }}}
-      {{{ AddButton }}}
       {{{ ChatInput }}}
       {{{ SentButton }}}
     `;

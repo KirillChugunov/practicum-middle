@@ -1,24 +1,25 @@
 import { Block, Button } from '@shared';
 import chatStore from '@/store/chatStore/chatStore.ts';
 import FileInput from '@/shared/ui/fileInput/fileInput.ts';
-import { ChatWebSocket } from '@/shared/core/ws/ws.ts';
 
-type TAddFileModalContentProps = {
+type TAddChatAvatarModalProps = {
+  chatId: string;
+  isOpen: boolean;
   isFileInput?: boolean;
+  isDragDropInput?: boolean;
   onDone?: () => void;
-  chatWS: ChatWebSocket;
 };
 
-type TAddFileModalContentChildren = {
+type TAddChatAvatarModalChildren = {
   ButtonSubmit: Button;
   FileInput?: FileInput;
 };
 
-export default class AddFileModalContent extends Block<
-  TAddFileModalContentProps,
-  TAddFileModalContentChildren
+export default class AddChatAvatarModalContent extends Block<
+  TAddChatAvatarModalProps,
+  TAddChatAvatarModalChildren
 > {
-  constructor(props: TAddFileModalContentProps) {
+  constructor(props: TAddChatAvatarModalProps) {
     const ButtonSubmit = new Button({
       label: 'Загрузить файл',
       variant: 'primary',
@@ -26,15 +27,15 @@ export default class AddFileModalContent extends Block<
       onClick: (e: Event) => this.handleSubmit(e),
     });
 
-    const children: TAddFileModalContentChildren = {
-      ButtonSubmit,
-    };
+    const children: TAddChatAvatarModalChildren = { ButtonSubmit };
 
     if (props.isFileInput) {
       children.FileInput = new FileInput({
         name: 'file',
         className: 'chat-modal__file-input',
-        onChange: (file) => console.log('Выбран файл:', file),
+        onChange: (file) => {
+          console.log('Выбран файл:', file);
+        },
       });
     }
 
@@ -46,25 +47,29 @@ export default class AddFileModalContent extends Block<
   }
 
   override componentDidUpdate(
-    oldProps: TAddFileModalContentProps,
-    newProps: TAddFileModalContentProps
+    oldProps: TAddChatAvatarModalProps,
+    newProps: TAddChatAvatarModalProps
   ): boolean {
-    if (oldProps.chatWS !== newProps.chatWS) {
-      this.setProps({ chatWS: newProps.chatWS });
+    if (oldProps.isOpen !== newProps.isOpen) {
+      this.updateVisibility(newProps.isOpen);
     }
     return true;
+  }
+
+  private updateVisibility(isOpen: boolean): void {
+    isOpen ? this.show() : this.hide();
   }
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
 
-    const fileInputBlock = this.children.FileInput;
-    if (!fileInputBlock) {
-      console.warn('Файл не выбран — элемент не найден');
+    const fileInput = this.children.FileInput;
+    if (!fileInput) {
+      console.warn('Поле загрузки файла не найдено.');
       return;
     }
 
-    const inputEl = fileInputBlock.getContent() as HTMLInputElement | null;
+    const inputEl = fileInput.getContent() as HTMLInputElement | null;
     const file = inputEl?.files?.[0];
 
     if (!file) {
@@ -72,14 +77,15 @@ export default class AddFileModalContent extends Block<
       return;
     }
 
+    const formData = new FormData();
+    formData.append('avatar', file);
+    formData.append('chatId', this.props.chatId);
+
     try {
-      const result = await chatStore.uploadFile(file);
-      if (result) {
-        this.props.chatWS.sendFile(String(result.id));
-        this.props.onDone?.();
-      }
+      await chatStore.updateChatAvatar(formData);
+      this.props.onDone?.();
     } catch (error) {
-      console.error('Ошибка при загрузке файла:', error);
+      console.error('Ошибка при обновлении аватара чата:', error);
     }
   }
 

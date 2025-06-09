@@ -1,129 +1,176 @@
-import { Block, Button, FormManager, InputField } from '@shared'
-import EventBus from '@/shared/core/eventBus/eventBus.ts'
-import userStore from '@/store/userStore/userStore.ts'
+import { Block, Button, FormManager, InputField } from '@shared';
+import EventBus from '@/shared/core/eventBus/eventBus.ts';
+import userStore from '@/store/userStore/userStore.ts';
+
+interface User {
+  email: string;
+  login: string;
+  first_name: string;
+  second_name: string;
+  display_name?: string;
+  phone: string;
+}
+
+interface UserProfileEditFormChildren {
+  Email: InputField;
+  Login: InputField;
+  FirstName: InputField;
+  SecondName: InputField;
+  ChatName: InputField;
+  Phone: InputField;
+  ButtonSubmitEdit: Button;
+}
 
 export default class UserProfileEditForm extends Block {
-  private eventBusInstance: EventBus<'submit'>
+  private readonly formManager: FormManager;
 
   constructor() {
-    const eventBus = new EventBus<'submit'>()
-    const formManager = new FormManager()
+    const eventBus = new EventBus<'submit'>();
+    const formManager = new FormManager();
 
     super('form', {
       className: 'user-profile-edit__grid',
+
       Email: new InputField({
         label: 'Почта',
         type: 'email',
         name: 'email',
-        placeHolder: 'Почта',
         eventBus,
         profile: true,
         onBlur: (e: Event) => {
-          if (this.children.Email instanceof InputField) {
-            formManager.validateField(e, this.children.Email)
+          const field = this.children.Email;
+          if (field instanceof InputField) {
+            formManager.validateField(e, field);
           }
         },
       }),
+
       Login: new InputField({
         label: 'Логин',
         type: 'text',
         name: 'login',
-        placeHolder: 'Логин',
         eventBus,
+        profile: true,
         onBlur: (e: Event) => {
-          if (this.children.Login instanceof InputField) {
-            formManager.validateField(e, this.children.Login)
+          const field = this.children.Login;
+          if (field instanceof InputField) {
+            formManager.validateField(e, field);
           }
         },
-        profile: true,
       }),
+
       FirstName: new InputField({
         label: 'Имя',
         type: 'text',
         name: 'first_name',
-        placeHolder: 'Имя',
         eventBus,
+        profile: true,
         onBlur: (e: Event) => {
-          if (this.children.FirstName instanceof InputField) {
-            formManager.validateField(e, this.children.FirstName)
+          const field = this.children.FirstName;
+          if (field instanceof InputField) {
+            formManager.validateField(e, field);
           }
         },
-        profile: true,
       }),
+
       SecondName: new InputField({
         label: 'Фамилия',
         type: 'text',
         name: 'second_name',
-        placeHolder: 'Фамилия',
         eventBus,
+        profile: true,
         onBlur: (e: Event) => {
-          if (this.children.SecondName instanceof InputField) {
-            formManager.validateField(e, this.children.SecondName)
+          const field = this.children.SecondName;
+          if (field instanceof InputField) {
+            formManager.validateField(e, field);
           }
         },
-        profile: true,
       }),
+
       ChatName: new InputField({
         label: 'Имя в чате',
         type: 'text',
         name: 'display_name',
-        placeHolder: 'Имя в чате',
         eventBus,
+        profile: true,
         onBlur: (e: Event) => {
-          if (this.children.ChatName instanceof InputField) {
-            formManager.validateField(e, this.children.ChatName)
+          const field = this.children.ChatName;
+          if (field instanceof InputField) {
+            formManager.validateField(e, field);
           }
         },
-        profile: true,
       }),
+
       Phone: new InputField({
         label: 'Телефон',
         type: 'tel',
         name: 'phone',
-        placeHolder: 'Телефон',
         eventBus,
+        profile: true,
         onBlur: (e: Event) => {
-          if (this.children.Phone instanceof InputField) {
-            formManager.validateField(e, this.children.Phone)
+          const field = this.children.Phone;
+          if (field instanceof InputField) {
+            formManager.validateField(e, field);
           }
         },
-        profile: true,
       }),
+
       ButtonSubmitEdit: new Button({
         label: 'Сохранить',
         variant: 'primary',
         type: 'submit',
-        onClick: (e: Event) => {
-          e.preventDefault()
-          this.eventBusInstance.emit('submit')
-          formManager.formSubmit(e)
+        onClick: (e: Event): void => {
+          e.preventDefault();
+          eventBus.emit('submit');
+          formManager.formSubmit(e, async () => {
+            const formData = formManager.getState().formState;
+
+            const userData: User = {
+              email: formData.email,
+              login: formData.login,
+              first_name: formData.first_name,
+              second_name: formData.second_name,
+              display_name: formData.display_name,
+              phone: formData.phone,
+            };
+
+            await userStore.updateProfile(userData);
+          });
         },
       }),
-      profile: true,
-    })
-    userStore.subscribe((user) => {
-      this.updateFields(user)
-    })
+    });
 
-    userStore.loadUser()
-    this.eventBusInstance = eventBus
+    this.formManager = formManager;
+
+    userStore.subscribe((user: User) => {
+      this.populateFormFields(user);
+    });
+
+    userStore.loadUser();
   }
-  private updateFields(user) {
-    const update = (input, value) => {
+
+  private populateFormFields(user: User): void {
+    const register = (
+      field: keyof UserProfileEditFormChildren,
+      value: string,
+      name: string
+    ): void => {
+      const input = this.children[field];
       if (input instanceof InputField) {
-        input.setProps({
-          placeHolder: value,
-        })
+        input.setProps({ value });
+        this.formManager.registerField(name, value);
       }
-    }
-    update(this.children.Email, user.email)
-    update(this.children.Login, user.login)
-    update(this.children.FirstName, user.first_name)
-    update(this.children.SecondName, user.second_name)
-    update(this.children.ChatName, user.display_name)
-    update(this.children.Phone, user.phone)
+    };
+
+    register('Email', user.email, 'email');
+    register('Login', user.login, 'login');
+    register('FirstName', user.first_name, 'first_name');
+    register('SecondName', user.second_name, 'second_name');
+    register('ChatName', user.display_name ?? '', 'display_name');
+    register('Phone', user.phone, 'phone');
   }
-  render() {
+
+  public render(): string {
     return `
       {{{ Email }}}
       {{{ Login }}}
@@ -134,6 +181,6 @@ export default class UserProfileEditForm extends Block {
       <div class="user-profile-edit__container">
         {{{ ButtonSubmitEdit }}}
       </div>
-    `
+    `;
   }
 }

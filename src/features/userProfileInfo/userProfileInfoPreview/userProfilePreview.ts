@@ -1,12 +1,10 @@
-import profilePicture from '../../../assets/icons/picture.svg'
-import { Block, Button, FormManager, InputField } from '@shared'
-import { UserProfileEditGoBack, UserProfileTitles } from '@/features'
-import userStore from '@/store/userStore/userStore.ts'
+import { Block, InputField } from '@shared';
+import { UserProfileEditGoBack, UserProfileTitles } from '@/features';
+import userStore, { TUser } from '@/store/userStore/userStore.ts';
 
 export default class UserProfilePreview extends Block {
-  constructor() {
-    const formManager = new FormManager()
 
+  constructor() {
     super('div', {
       className: 'user-profile__container',
 
@@ -14,18 +12,13 @@ export default class UserProfilePreview extends Block {
 
       ProfileTitles: new UserProfileTitles({
         name: 'userName',
-        profilePicture,
       }),
 
       Email: new InputField({
-        label: 'email',
-        type: 'email',
-        onBlur: (e: Event) => {
-          if (this.children.Email instanceof InputField)
-            formManager.validateField(e, this.children.Email)
-        },
+        label: 'Почта',
         name: 'email',
-        placeHolder: 'Почта',
+        type: 'email',
+        value: '',
         disabled: true,
         profile: true,
       }),
@@ -33,101 +26,74 @@ export default class UserProfilePreview extends Block {
       Login: new InputField({
         label: 'Логин',
         name: 'login',
-        onBlur: (e: Event) => {
-          if (this.children.Login instanceof InputField)
-            formManager.validateField(e, this.children.Login)
-        },
         type: 'text',
+        value: '',
         disabled: true,
-        placeHolder: 'Логин',
         profile: true,
       }),
 
       FirstName: new InputField({
         label: 'Имя',
-        type: 'text',
-        onBlur: (e: Event) => {
-          if (this.children.FirstName instanceof InputField)
-            formManager.validateField(e, this.children.FirstName)
-        },
         name: 'first_name',
+        type: 'text',
+        value: '',
         disabled: true,
-        placeHolder: 'Имя',
         profile: true,
       }),
 
       SecondName: new InputField({
         label: 'Фамилия',
-        type: 'text',
-        onBlur: (e: Event) => {
-          if (this.children.SecondName instanceof InputField)
-            formManager.validateField(e, this.children.SecondName)
-        },
         name: 'second_name',
+        type: 'text',
+        value: '',
         disabled: true,
-        placeHolder: 'Фамилия',
         profile: true,
       }),
 
       ChatName: new InputField({
         label: 'Имя в чате',
-        type: 'text',
-        onBlur: (e: Event) => {
-          if (this.children.ChatName instanceof InputField)
-            formManager.validateField(e, this.children.ChatName)
-        },
         name: 'display_name',
+        type: 'text',
+        value: '',
         disabled: true,
-        placeHolder: 'Имя в чате',
         profile: true,
       }),
 
       Phone: new InputField({
         label: 'Телефон',
-        type: 'phone',
-        onBlur: (e: Event) => {
-          if (this.children.Phone instanceof InputField)
-            formManager.validateField(e, this.children.Phone)
-        },
         name: 'phone',
+        type: 'tel',
+        value: '',
         disabled: true,
-        placeHolder: 'Телефон',
         profile: true,
       }),
-
-      ButtonSubmitEdit: new Button({
-        label: 'Сохранить',
-        variant: 'primary',
-        type: 'submit',
-        onClick: (e: Event) => {
-          console.log(e.target)
-        },
-      }),
-    })
+    });
 
     userStore.subscribe((user) => {
-      this.updateFields(user)
-    })
-
+      this.updateFields(user);
+    });
   }
 
-  private updateFields(user) {
-    const update = (input, value) => {
-      if (input instanceof InputField) {
-        input.setProps({
-          placeHolder: value,
-        })
+  private updateFields(user: TUser): void {
+    type InputFieldKeys = 'Email' | 'Login' | 'FirstName' | 'SecondName' | 'ChatName' | 'Phone';
+
+    const update = (fieldKey: InputFieldKeys, value: string) => {
+      const field = this.children[fieldKey];
+      if (field instanceof InputField) {
+        field.setProps({ value });
       }
-    }
-    update(this.children.Email, user.email)
-    update(this.children.Login, user.login)
-    update(this.children.FirstName, user.first_name)
-    update(this.children.SecondName, user.second_name)
-    update(this.children.ChatName, user.display_name)
-    update(this.children.Phone, user.phone)
+    };
+
+    update('Email', user.email);
+    update('Login', user.login);
+    update('FirstName', user.first_name);
+    update('SecondName', user.second_name);
+    update('ChatName', user.display_name ?? '');
+    update('Phone', user.phone);
   }
 
-  render() {
+
+  render(): string {
     return `
       {{{ GoBackButton }}}
       <section class="user-profile__info">
@@ -144,10 +110,10 @@ export default class UserProfilePreview extends Block {
           <div class="user-profile__item"><a href="/userprofileedit">Изменить данные</a></div>
           <div class="user-profile__item"><a href="/userprofilepasswordedit">Изменить пароль</a></div>
           <div class="user-profile__item">
-            <a class="user-profile__item_color-red">Выйти</a>
+            <a class="user-profile__item_color-red" href="/logout">Выйти</a>
           </div>
         </section>
       </section>
-    `
+    `;
   }
 }

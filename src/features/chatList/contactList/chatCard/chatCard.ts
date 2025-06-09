@@ -1,32 +1,47 @@
-import { Block } from '@shared'
-import { ChatAvatar } from '@/features'
+import { Block } from '@shared';
+import { ChatAvatar } from '@/features';
 
-type TChatCard = {
-  userName: string | undefined
-  avatar: string | null
-  lastMessagePreview: {
-    owner: string | undefined
-    message: string | undefined
-    timeStamp: string | undefined
-  } | undefined
-  newMessageCount: string | undefined
-}
+type TLastMessagePreview = {
+  owner?: string;
+  message?: string;
+  timeStamp?: string;
+};
 
-export default class ChatCard extends Block {
-  constructor(props: TChatCard & { onClick: () => void }) {
+type TChatCardProps = {
+  userName?: string;
+  avatar: string | null;
+  lastMessagePreview?: TLastMessagePreview;
+  newMessageCount?: string;
+  chatId: string;
+  onClick: () => void;
+};
+
+type TChatCardChildren = {
+  ChatAvatar?: ChatAvatar;
+};
+
+export default class ChatCard extends Block<TChatCardProps, TChatCardChildren> {
+  constructor(props: TChatCardProps) {
+    const children: TChatCardChildren = {};
+
+    if (props.avatar) {
+      children.ChatAvatar = new ChatAvatar({
+        avatar: props.avatar,
+        chatId: props.chatId,
+      });
+    }
+
     super('div', {
       ...props,
+      ...children,
       className: 'chatCard',
       events: {
-        click: props.onClick, // 👈 ВАЖНО!
+        click: props.onClick,
       },
-      ChatAvatar: props.avatar && new ChatAvatar({
-        avatar: props.avatar,
-      }),
-    })
+    });
   }
 
-  public render(): string {
+  render(): string {
     return `
       {{{ ChatAvatar }}}
       <div class="chatCard__info">
@@ -39,9 +54,11 @@ export default class ChatCard extends Block {
       <div class="chatCard__notifications">
         <small>{{lastMessagePreview.timeStamp}}</small>
         <div class="chatCard__notification-container">
-          <small class="chatCard__notification-text">{{newMessageCount}}</small>
+          <small class="chatCard__notification-text">
+            {{newMessageCount}}
+          </small>
         </div>
       </div>
-    `
+    `;
   }
 }

@@ -1,35 +1,64 @@
-import photoVideoIcon from '../../../../assets/icons/photoVideo.svg';
-import locationIcon from '../../../../assets/icons/location.svg';
-import fileIcon from '../../../../assets/icons/file.svg';
-
+import photoVideoIcon from '@/assets/icons/photoVideo.svg';
 import { Block, IconButton } from '@shared';
 import { ChatWebSocket } from '@/shared/core/ws/ws.ts';
+import modalService from '@/shared/core/modalService/modalService.ts';
+import AddFileModalContent from '@/features/chatList/chat/addFileModalContent/ModalConent.ts';
 
-type TAddFileDropDown = {
+type TAddFileDropDownProps = {
   isOpen: boolean;
-  chatWS: ChatWebSocket;
-  openPhotoModal?: () => void;
-  openFileModal?: () => void;
-  openLocationModal?: () => void;
+  chatWS?: ChatWebSocket;
 };
 
-export default class AddFileDropDown extends Block {
-  constructor(props: TAddFileDropDown) {
-    const iconButtons = AddFileDropDown.initButtons(props);
+type TAddFileDropDownChildren = {
+  PhotoButton: IconButton;
+};
+
+export default class AddFileDropDown extends Block<
+  TAddFileDropDownProps,
+  TAddFileDropDownChildren
+> {
+  private chatWS?: ChatWebSocket;
+
+  constructor(props: TAddFileDropDownProps) {
+    const PhotoButton = new IconButton({
+      buttonIcon: photoVideoIcon,
+      alt: 'Photo icon',
+      onClick: (e) => {
+        e.preventDefault();
+        modalService.open(AddFileModalContent, {
+          isFileInput: true,
+          isOpen: true,
+          onDone: () => modalService.close(),
+          chatWS: this.chatWS!,
+        });
+      },
+    });
 
     super('div', {
       ...props,
       className: 'add-file',
-      ...iconButtons,
+      PhotoButton,
     });
+
+    this.chatWS = props.chatWS;
   }
 
-  public componentDidMount(): void {
-    this.updateVisibility(false);
+  override componentDidMount(): void {
+    this.updateVisibility(this.props.isOpen);
   }
 
-  public componentDidUpdate(_oldProps: TAddFileDropDown, newProps: TAddFileDropDown): boolean {
-    this.updateVisibility(newProps.isOpen);
+  override componentDidUpdate(
+    oldProps: TAddFileDropDownProps,
+    newProps: TAddFileDropDownProps
+  ): boolean {
+    if (oldProps.isOpen !== newProps.isOpen) {
+      this.updateVisibility(newProps.isOpen);
+    }
+
+    if (oldProps.chatWS !== newProps.chatWS) {
+      this.chatWS = newProps.chatWS;
+    }
+
     return true;
   }
 
@@ -37,47 +66,11 @@ export default class AddFileDropDown extends Block {
     isOpen ? this.show() : this.hide();
   }
 
-  private static initButtons(props: TAddFileDropDown) {
-    return {
-      PhotoButton: new IconButton({
-        buttonIcon: photoVideoIcon,
-        alt: 'Photo icon',
-        onClick: (e) => {
-          e.preventDefault()
-          console.log("test")
-          console.log(props)
-          props.openPhotoModal?.();
-        },
-      }),
-
-      FileButton: new IconButton({
-        buttonIcon: locationIcon,
-        alt: 'File icon',
-        onClick: () => {
-          props.openFileModal?.();
-        },
-      }),
-
-      LocationButton: new IconButton({
-        buttonIcon: fileIcon,
-        alt: 'Location icon',
-        onClick: () => {
-          props.openLocationModal?.();
-        },
-      }),
-    };
-  }
-
-  public render(): string {
+  override render(): string {
     return `
       <div class="add-file__option">
-        {{{ PhotoButton }}}<p>Фото или Видео</p>
-      </div>
-      <div class="add-file__option">
-        {{{ FileButton }}}<p>Файл</p>
-      </div>
-      <div class="add-file__option">
-        {{{ LocationButton }}}<p>Локация</p>
+        {{{ PhotoButton }}}
+        <p>Фото или Видео</p>
       </div>
     `;
   }

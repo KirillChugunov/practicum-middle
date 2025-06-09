@@ -1,17 +1,15 @@
 import Block from '@/shared/core/block/block';
-import { Props } from '@/shared/core/block/block';
 
-interface ModalProps extends Props {
+interface ModalProps {
   child?: Block;
   onClose?: () => void;
 }
 
 export default class Modal extends Block {
   constructor(props: ModalProps) {
-    const { className = '', onClose } = props;
+    const { onClose } = props;
 
     super('div', {
-      className: `modal ${className}`,
       events: {
         click: (e: Event) => {
           const target = e.target as HTMLElement;
@@ -28,7 +26,9 @@ export default class Modal extends Block {
       this.children.child = props.child;
     }
   }
-
+  public getChild(): Block | undefined {
+    return this.children?.child as Block | undefined;
+  }
   public setProps(nextProps: Partial<ModalProps>): void {
     super.setProps(nextProps);
 

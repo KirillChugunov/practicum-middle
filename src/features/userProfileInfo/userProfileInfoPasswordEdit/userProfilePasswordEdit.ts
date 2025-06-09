@@ -1,39 +1,51 @@
-import profilePicture from '../../../assets/icons/picture.svg'
-import { Block, Button } from '@shared'
+import { Block, Button } from '@shared';
 import {
   UserProfileEditGoBack,
   UserProfilePasswordEditForm,
   UserProfileTitles,
-} from '@/features'
+} from '@/features';
 
-export default class UserProfilePasswordEdit extends Block {
+type TUserProfilePasswordEditProps = Record<string, never>;
+
+type TUserProfilePasswordEditChildren = {
+  GoBackButton: UserProfileEditGoBack;
+  ProfileTitles: UserProfileTitles;
+  ButtonSubmitEdit: Button;
+  UserProfilePasswordEdit: UserProfilePasswordEditForm;
+};
+
+export default class UserProfilePasswordEdit extends Block<
+  TUserProfilePasswordEditProps,
+  TUserProfilePasswordEditChildren
+> {
   constructor() {
     super('div', {
       className: 'user-profile__container',
       GoBackButton: new UserProfileEditGoBack(),
       ProfileTitles: new UserProfileTitles({
         name: 'userName',
-        profilePicture,
       }),
       ButtonSubmitEdit: new Button({
         label: 'Сохранить',
         variant: 'primary',
         type: 'submit',
-        onClick: (e) => {
-          console.log(e.target)
+        onClick: (e: Event) => {
+          e.preventDefault();
+          console.log(e.target);
         },
       }),
       UserProfilePasswordEdit: new UserProfilePasswordEditForm(),
-    })
+    });
   }
 
-  render() {
+  override render(): string {
     return `
       {{{ GoBackButton }}}
       <section class="user-profile__password-edit">
-        {{{ UserProfileTitles name="Иван" }}}
+        {{{ ProfileTitles }}}
         {{{ UserProfilePasswordEdit }}}
+        {{{ ButtonSubmitEdit }}}
       </section>
-    `
+    `;
   }
 }

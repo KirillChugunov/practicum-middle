@@ -19,7 +19,7 @@ export default class Store<T extends Record<string, unknown>> {
 
   subscribe(listener: Listener<T>): () => void {
     this.listeners.add(listener)
-    listener(this.getState()) // вызвать сразу при подписке
+    listener(this.getState())
     return () => {
       this.listeners.delete(listener)
     }

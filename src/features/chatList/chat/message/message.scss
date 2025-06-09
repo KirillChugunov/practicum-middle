@@ -11,11 +11,12 @@
   background: #e4edfd;
 }
 
-.message__incoming {
+.message__partner {
   border-radius: 0 12px 12px;
   width: 45%;
   justify-self: start;
   background: #f8f8f8;
+  padding: 12px 12px 12px 12px;
 }
 
 .message__text {
@@ -47,4 +48,5 @@
   min-height: 13px;
   color: $primary;
   background: rgb(82 82 82 / 50%);
+  text-align: center;
 }

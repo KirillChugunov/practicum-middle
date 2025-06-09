@@ -1,16 +1,21 @@
 import { Block } from '@shared';
 import { Chat, ContactList } from '@/features';
 
-export default class ChatList extends Block {
-  public currentChatId: number | null = null;
-  public currentChatSpeakerUserName: string | null = null;
-  public currentChatSpeakerAvatar: string | null = null;
+type TChatListProps = Record<string, never>;
 
+type TChatListChildren = {
+  ContactList: ContactList;
+  Chat: Chat;
+};
+
+export default class ChatList extends Block<TChatListProps, TChatListChildren> {
   constructor() {
-    const chat = new Chat({ chatId: null});
+    const chat = new Chat({ chatId: null });
 
     const contactList = new ContactList({
-      onChatSelect: (id: number, userName: string, avatar: string) => this.setChatInfo(id, userName,avatar ),
+      onChatSelect: (id: number) => {
+        chat.setProps({ chatId: String(id) });
+      },
     });
 
     super('div', {
@@ -20,16 +25,7 @@ export default class ChatList extends Block {
     });
   }
 
-  private setChatInfo(id: number, userName: string, avatar: string): void {
-    this.currentChatId = id;
-    this.currentChatSpeakerAvatar = userName;
-    this.currentChatSpeakerUserName = avatar;
-
-    if ( this.children.Chat instanceof Block )
-    this.children.Chat.setProps({ chatId: id });
-  }
-
-  public render(): string {
+  override render(): string {
     return `
       {{{ ContactList }}}
       {{{ Chat }}}

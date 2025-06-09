@@ -1,29 +1,26 @@
 import { Block, IconButton } from '@shared';
 import { ChatAvatar } from '@/features';
 import FriendControlDropDown from '@/features/chatList/chat/friendControlsDropDown/friendControlDropDown.ts';
-
-type TChatUser = {
-  first_name: string;
-  avatar: string | null;
-};
+import chatStore from '@/store/chatStore/chatStore.ts';
+import defaultChatAvatar from '@/assets/icons/chatListAvatar.svg';
 
 type TChatTitleProps = {
-  users: TChatUser[];
   chatId: string | null;
+  className?: string;
+  UserNames?: string;
 };
 
-export default class ChatTitle extends Block {
+type TChatTitleChildren = {
+  UserAvatars: ChatAvatar[];
+  MoreButton: IconButton;
+  DropDown: FriendControlDropDown;
+};
+
+export default class ChatTitle extends Block<TChatTitleProps, TChatTitleChildren> {
+  private unsubscribe: (() => void) | null = null;
   private isFriendControlDropDownOpen = false;
 
   constructor(props: TChatTitleProps) {
-    const avatars = props.users.map(
-      (user) =>
-        new ChatAvatar({
-          avatar: user.avatar,
-          className: 'chat-section__avatar',
-        }),
-    );
-
     const dropDown = new FriendControlDropDown({
       isOpen: false,
       chatId: props.chatId,
@@ -32,56 +29,76 @@ export default class ChatTitle extends Block {
     const moreButton = new IconButton({
       buttonIcon: './src/assets/icons/moreIcon.svg',
       alt: 'More icon',
-      onClick: (e: Event) => {
+      onClick: (e: Event): void => {
         e.preventDefault();
-        this.isFriendControlDropDownOpen = !this.isFriendControlDropDownOpen;
-        if (this.children.DropDown instanceof Block) {
-          this.children.DropDown.setProps({
-            isOpen: this.isFriendControlDropDownOpen,
-            chatId: this.props.chatId
-          });
-        }
+        this.toggleDropDown();
       },
     });
-
 
     super('div', {
       ...props,
       className: 'chat-section__title-wrapper',
-      UserAvatars: avatars,
-      UserNames: props.users.map((u) => u.first_name).join(', '),
+      UserNames: '',
       DropDown: dropDown,
       MoreButton: moreButton,
+      UserAvatars: [],
+    });
+
+    this.unsubscribe = chatStore.subscribe((state) => {
+      const { chatId } = this.props;
+      if (!chatId) return;
+
+      const users = state.chatUserMap?.[chatId] ?? [];
+
+      this.children.UserAvatars = users.map((user) => {
+        return new ChatAvatar({
+          isTitle: true,
+          avatar: user.avatar ?? defaultChatAvatar,
+          className: 'chat-section__avatar',
+        });
+      });
+
+      this.setProps({
+        UserNames: users.map((u) => u.first_name).join(', '),
+      });
+    });
+
+    if (props.chatId) {
+      chatStore.fetchChatUsers(props.chatId);
+    }
+  }
+
+  private toggleDropDown(): void {
+    this.isFriendControlDropDownOpen = !this.isFriendControlDropDownOpen;
+
+    this.children.DropDown.setProps({
+      isOpen: this.isFriendControlDropDownOpen,
+      chatId: this.props.chatId,
     });
   }
 
-  public componentDidUpdate(oldProps: TChatTitleProps, newProps: TChatTitleProps): boolean {
-    if (oldProps.users !== newProps.users) {
-      const avatars = newProps.users.map(
-        (user) =>
-          new ChatAvatar({
-            avatar: user.avatar,
-            className: 'chat-section__avatar',
-          }),
-      );
-
-      this.setProps({
-        UserAvatars: avatars,
-        UserNames: newProps.users.map((u) => u.first_name).join(', '),
-      });
-    }
-    if (oldProps.chatId !== newProps.chatId && this.children.DropDown instanceof Block) {
+  override componentDidUpdate(
+    oldProps: TChatTitleProps,
+    newProps: TChatTitleProps
+  ): boolean {
+    if (oldProps.chatId !== newProps.chatId && newProps.chatId) {
+      chatStore.fetchChatUsers(newProps.chatId);
       this.children.DropDown.setProps({ chatId: newProps.chatId });
     }
+
     return true;
   }
 
+  override destroy(): void {
+    this.unsubscribe?.();
+    super.destroy();
+  }
 
-  public render(): string {
+  override render(): string {
     return `
       <div class="chat-section__titles">
         <div class="chat-section__avatars">
-          {{#each UserAvatars}} {{{ this }}} {{/each}}
+          {{{ UserAvatars }}}
         </div>
         <h2>{{ UserNames }}</h2>
         <div class="chat-section__options">

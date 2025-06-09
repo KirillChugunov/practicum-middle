@@ -3,8 +3,8 @@
   background: $primary-background;
   border-right: solid 1px $border-primary;
   padding: 10px;
-  max-height: 100%;
-  overflow-y: scroll;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 
 .contact-list__profile-link {

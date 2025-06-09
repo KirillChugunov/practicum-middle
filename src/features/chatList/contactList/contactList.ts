@@ -1,46 +1,58 @@
-import chatStore from '@/store/chatStore/chatStore.ts';
 import { Block } from '@shared';
+import chatStore from '@/store/chatStore/chatStore.ts';
 import { ChatCard } from '@/features';
 import { formatTime } from '@/shared/utils/timeTrimmer.ts';
-import SearchInputField from '@/features/chatList/contactList/searchImput/searchInput.ts'
+import SearchInputField from '@/features/chatList/contactList/searchImput/searchInput.ts';
 
 type TContactListProps = {
-  onChatSelect: (chatId: number, userName: string, avatar: string) => void;
+  onChatSelect: (chatId: number, userName: string, avatar: string | null) => void;
+  className?: string;
 };
 
-export default class ContactList extends Block {
+type TContactListChildren = {
+  SearchInput: SearchInputField;
+  ChatCards?: ChatCard[];
+};
+
+export default class ContactList extends Block<TContactListProps, TContactListChildren> {
   private unsubscribe?: () => void;
 
   constructor(props: TContactListProps) {
+    const searchInput = new SearchInputField({
+      label: '',
+      name: 'search',
+      placeHolder: 'Поиск',
+      onSearch: (value: string): void => {
+        chatStore.fetchChats(undefined, undefined, value || undefined);
+      },
+    });
+
     super('section', {
       ...props,
+      SearchInput: searchInput,
       className: 'contact-list',
-      SearchInput: new SearchInputField({
-        label: '',
-        name: 'search',
-        placeHolder: 'Поиск',
-        onSearch: (value: string) => {
-          chatStore.fetchChats(undefined, undefined, value || undefined);
-        },
-      }),
     });
   }
 
-  async componentDidMount(): Promise<void> {
-    this.unsubscribe = chatStore.subscribe(() => {
-      this.updateChatCards();
-    });
+  override async componentDidMount(): Promise<void> {
+    this.unsubscribe = chatStore.subscribe(() => this.updateChatCards());
 
     await chatStore.fetchChats();
     this.updateChatCards();
   }
 
+  override destroy(): void {
+    this.unsubscribe?.();
+    super.destroy();
+  }
+
   private updateChatCards(): void {
     const state = chatStore.getState();
 
-    this.children.ChatCards = state.chats.map((chat) =>
-      new ChatCard({
+    this.children.ChatCards = state.chats.map((chat) => {
+      return new ChatCard({
         userName: chat.title,
+        avatar: chat.avatar,
         lastMessagePreview: {
           owner: chat.last_message?.user?.first_name,
           message: chat.last_message?.content,
@@ -49,21 +61,17 @@ export default class ContactList extends Block {
             : 'сообщений нет',
         },
         newMessageCount: String(chat.unread_count ?? 0),
-        avatar: chat.avatar,
+        chatId: String(chat.id),
         onClick: () => {
           this.props.onChatSelect(chat.id, chat.title, chat.avatar);
         },
-      })
-    );
+      });
+    });
 
     this.forceUpdate();
   }
 
-  public componentWillUnmount(): void {
-    this.unsubscribe?.();
-  }
-
-  public render(): string {
+  override render(): string {
     return `
       <a class="contact-list__profile-link" href="/userprofile">
         <small>Профиль ></small>

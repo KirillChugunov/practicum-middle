@@ -2,39 +2,48 @@ import { Block, Button, InputField } from '@shared';
 import EventBus from '@/shared/core/eventBus/eventBus.ts';
 import chatStore from '@/store/chatStore/chatStore.ts';
 
-export default class EmptyChat extends Block {
+type TEmptyChatProps = {
+  className?: string;
+};
+
+type TEmptyChatChildren = {
+  TitleInput: InputField;
+  SubmitButton: Button;
+};
+
+export default class EmptyChat extends Block<TEmptyChatProps, TEmptyChatChildren> {
   constructor() {
-    const eventBus = new EventBus<'submit'>()
+    const eventBus = new EventBus<'submit'>();
+
+    const TitleInput = new InputField({
+      label: 'Название чата',
+      name: 'title',
+      type: 'text',
+      eventBus,
+      onBlur: () => {},
+    });
+
+    const SubmitButton = new Button({
+      label: 'Создать чат',
+      type: 'submit',
+      variant: 'primary',
+      onClick: async (e: Event) => {
+        e.preventDefault();
+
+        const inputEl = TitleInput.getContent() as HTMLInputElement | null;
+        const title = inputEl?.value.trim();
+
+        if (title) {
+          await chatStore.createChat(title);
+        }
+      },
+    });
 
     super('form', {
       className: 'chat-section__chat-window-empty-form',
-      TitleInput: new InputField({
-        label: 'Название чата',
-        name: 'title',
-        type: 'text',
-        eventBus,
-        onBlur: () => {
-        },
-      }),
-      SubmitButton: new Button({
-        label: 'Создать чат',
-        type: 'submit',
-        variant: 'primary',
-        onClick: async (e: Event) => {
-          e.preventDefault()
-
-          const inputElement = this.getContent()?.querySelector(
-            'input[name="title"]',
-          ) as HTMLInputElement | null
-
-          const title = inputElement?.value.trim()
-          if (title) {
-            await chatStore.createChat(title)
-          }
-        },
-      }),
-    })
-
+      TitleInput,
+      SubmitButton,
+    });
   }
 
   render(): string {

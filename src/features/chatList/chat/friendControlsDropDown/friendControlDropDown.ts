@@ -1,29 +1,32 @@
 import { Block, IconButton } from '@shared';
-import deleteIcon from '../../../../assets/icons/deletIcon.svg';
-import plusIcon from '../../../../assets/icons/plusIcon.svg';
+import deleteIcon from '@/assets/icons/deletIcon.svg';
+import plusIcon from '@/assets/icons/plusIcon.svg';
 import modalService from '@/shared/core/modalService/modalService.ts';
 import AddUserModalContent from '@/features/chatList/chat/chatModalConent/ModalConent.ts';
 
-type TFriendControlDropDown = {
+type TFriendControlDropDownProps = {
   isOpen: boolean;
   chatId: string | null;
   onAddClick?: () => void;
   onDeleteClick?: () => void;
 };
 
-export default class FriendControlDropDown extends Block {
-  constructor(props: TFriendControlDropDown) {
-    super('div', {
-      ...props,
-      className: 'friend-controls',
-    });
+type TFriendControlDropDownChildren = {
+  AddUserButton: IconButton;
+  DeleteUserButton: IconButton;
+};
 
-    const addUserButton = new IconButton({
+export default class FriendControlDropDown extends Block<
+  TFriendControlDropDownProps,
+  TFriendControlDropDownChildren
+> {
+  constructor(props: TFriendControlDropDownProps) {
+    const AddUserButton = new IconButton({
       onClick: (e: Event) => {
         e.preventDefault();
-        console.log(this.props.chatId, 'ddchatId');
+        props.onAddClick?.();
         modalService.open(AddUserModalContent, {
-          chatId: this.props.chatId,
+          chatId: props.chatId ?? '',
           isAdd: true,
           onDone: () => modalService.close(),
         });
@@ -32,40 +35,45 @@ export default class FriendControlDropDown extends Block {
       alt: 'Иконка добавления',
     });
 
-    const deleteUserButton = new IconButton({
+    const DeleteUserButton = new IconButton({
       onClick: (e: Event) => {
         e.preventDefault();
-        this.props.onDeleteClick?.();
+        props.onDeleteClick?.();
+        modalService.open(AddUserModalContent, {
+          chatId: props.chatId ?? '',
+          isAdd: false,
+          onDone: () => modalService.close(),
+        });
       },
       buttonIcon: deleteIcon,
       alt: 'Иконка удаления',
     });
 
-    this.children.AddUserButton = addUserButton;
-    this.children.DeleteUserButton = deleteUserButton;
+    super('div', {
+      ...props,
+      className: 'friend-controls',
+      AddUserButton,
+      DeleteUserButton,
+    });
   }
 
-  public componentDidMount(): void {
-    this.updateVisibility(false);
+  override componentDidMount(): void {
+    this.updateVisibility(this.props.isOpen);
   }
 
-  public componentDidUpdate(
-    _oldProps: TFriendControlDropDown,
-    newProps: TFriendControlDropDown
+  override componentDidUpdate(
+    _oldProps: TFriendControlDropDownProps,
+    newProps: TFriendControlDropDownProps
   ): boolean {
     this.updateVisibility(newProps.isOpen);
     return true;
   }
 
   private updateVisibility(isOpen: boolean): void {
-    if (isOpen) {
-      this.show();
-    } else {
-      this.hide();
-    }
+    isOpen ? this.show() : this.hide();
   }
 
-  public render(): string {
+  override render(): string {
     return `
       <div class="friend-controls__option">
         {{{ AddUserButton }}}

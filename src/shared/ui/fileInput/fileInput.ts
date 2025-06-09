@@ -25,8 +25,4 @@ export default class FileInput extends Block {
       },
     });
   }
-
-  render(): string {
-    return '';
-  }
 }
