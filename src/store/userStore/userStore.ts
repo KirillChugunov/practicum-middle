@@ -4,7 +4,6 @@ import Store from '@/shared/core/store/store.ts'
 import router from '@/shared/core/router/router.ts'
 import defaultAvatar from '@/assets/icons/picture.svg'
 
-// Тип пользователя
 export type TUser = {
   avatar: string
   display_name: string
@@ -17,7 +16,6 @@ export type TUser = {
   isAuth: boolean
 }
 
-// Начальное значение пользователя
 const defaultUser: TUser = {
   avatar: defaultAvatar,
   display_name: '',

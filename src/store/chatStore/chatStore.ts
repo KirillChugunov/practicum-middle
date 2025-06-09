@@ -149,7 +149,7 @@ class ChatStore extends Store<TChatStore> {
 
       const { id } = JSON.parse(res.responseText)
 
-      await this.fetchChats() // обновить список чатов
+      await this.fetchChats()
 
       return id
     } catch (e: any) {

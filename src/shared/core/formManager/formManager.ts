@@ -34,7 +34,6 @@ class FormManager {
   }
 
   setField(name: string, value: string, error: string) {
-    // Сброс ошибки сабмита при любом изменении поля
     if (this.submitError) {
       this.submitError = null
     }

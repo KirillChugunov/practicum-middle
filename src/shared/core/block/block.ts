@@ -2,7 +2,6 @@ import { nanoid } from 'nanoid'
 import Handlebars from 'handlebars'
 import EventBus from '../eventBus/eventBus.ts'
 
-// Базовые пропсы
 export interface BaseProps {
   className?: string
   attrs?: Record<string, string | boolean>
@@ -18,8 +17,6 @@ export interface BaseProps {
     | unknown
 }
 
-// Предобъявление типа экземпляра компонента, чтобы избежать циклов
-// Используется только для типизации `children`
 export type BlockInstance = Block<any, any>
 
 interface Meta<TProps> {
@@ -271,7 +268,7 @@ export default class Block<
       },
       set(target, prop, value) {
         const oldProps = { ...target }
-        const result = Reflect.set(target, prop, value) // ✅ безопасно
+        const result = Reflect.set(target, prop, value)
         eventBus.emit(Block.EVENTS.FLOW_CDU, oldProps, target)
         return result
       },

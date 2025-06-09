@@ -25,7 +25,7 @@ export default class UserProfilePasswordEdit extends Block {
       }),
       NewPassword: new InputField({
         label: 'Новый пароль',
-        type: 'password', // ✅ исправлено
+        type: 'password',
         onBlur: (e: Event) => {
           if (this.children.NewPassword instanceof Block)
             formManager.validateField(e, this.children.NewPassword)

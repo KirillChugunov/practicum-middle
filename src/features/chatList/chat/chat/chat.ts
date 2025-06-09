@@ -21,7 +21,7 @@ type ChatChildren = {
   ChatForm: ChatForm
   AddFileDropDown: AddFileDropDown
   AddButton: IconButton
-  Messages?: Block[] // сообщения динамически создаются
+  Messages?: Block[]
 }
 
 export default class Chat extends Block<ChatProps, ChatChildren> {
