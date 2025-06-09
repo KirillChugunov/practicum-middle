@@ -1,4 +1,5 @@
 import { Block, Button } from '@shared'
+import router from '@/shared/core/router/router.ts'
 
 type TErrorCircleProps = {
   error: string
@@ -18,9 +19,7 @@ export default class ErrorCircle extends Block<
       variant: 'link',
       label: 'Назад к чатам',
       type: 'link',
-      onClick: () => {
-        console.log('test') // Заменить на реальный переход, если нужно
-      },
+      onClick: () => router.go("/chatlist"),
     })
 
     super('div', {
