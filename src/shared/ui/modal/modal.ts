@@ -1,19 +1,27 @@
 import Block from '@/shared/core/block/block';
 
-interface ModalProps {
+export type ModalProps = {
   child?: Block;
   onClose?: () => void;
+  className?: string;
 }
 
-export default class Modal extends Block {
+export type ModalChildren = {
+  child?: Block;
+}
+
+export default class Modal extends Block<ModalProps, ModalChildren> {
   constructor(props: ModalProps) {
-    const { onClose } = props;
+    const { className = '', onClose } = props;
 
     super('div', {
+      ...props,
+      className: `modal ${className}`,
       events: {
         click: (e: Event) => {
           const target = e.target as HTMLElement;
           const content = this.getContent()?.querySelector('.modal__content');
+
           if (content && !content.contains(target)) {
             onClose?.();
             this.hide();
@@ -26,10 +34,8 @@ export default class Modal extends Block {
       this.children.child = props.child;
     }
   }
-  public getChild(): Block | undefined {
-    return this.children?.child as Block | undefined;
-  }
-  public setProps(nextProps: Partial<ModalProps>): void {
+
+  public override setProps(nextProps: Partial<ModalProps>): void {
     super.setProps(nextProps);
 
     if (nextProps.child && nextProps.child !== this.children.child) {
@@ -45,6 +51,7 @@ export default class Modal extends Block {
 
   public close(): void {
     this.hide();
+
     const root = document.getElementById('modal-root');
     const content = this.getContent();
     if (root && content && root.contains(content)) {
@@ -53,18 +60,18 @@ export default class Modal extends Block {
   }
 
   public show(): void {
-    if (this.element) {
-      this.element.classList.add('modal--visible');
-    }
+    this.element?.classList.add('modal--visible');
   }
 
   public hide(): void {
-    if (this.element) {
-      this.element.classList.remove('modal--visible');
-    }
+    this.element?.classList.remove('modal--visible');
   }
 
-  render(): string {
+  public getChild(): Block | undefined {
+    return this.children.child;
+  }
+
+  override render(): string {
     return `
       <div class="modal__overlay">
         <div class="modal__content">

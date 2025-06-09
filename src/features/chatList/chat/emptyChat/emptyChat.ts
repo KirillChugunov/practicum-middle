@@ -30,7 +30,8 @@ export default class EmptyChat extends Block<TEmptyChatProps, TEmptyChatChildren
       onClick: async (e: Event) => {
         e.preventDefault();
 
-        const inputEl = TitleInput.getContent() as HTMLInputElement | null;
+        const wrapper = TitleInput.getContent();
+        const inputEl = wrapper?.querySelector('input') as HTMLInputElement | null;
         const title = inputEl?.value.trim();
 
         if (title) {

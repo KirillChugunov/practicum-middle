@@ -1,4 +1,4 @@
-import { Block, InputField } from '@shared';
+import { Block, Button, InputField } from '@shared'
 import { UserProfileEditGoBack, UserProfileTitles } from '@/features';
 import userStore, { TUser } from '@/store/userStore/userStore.ts';
 
@@ -67,6 +67,15 @@ export default class UserProfilePreview extends Block {
         disabled: true,
         profile: true,
       }),
+      ButtonLogout: new Button({
+        label: 'Выйти',
+        variant: 'link',
+        type: 'submit',
+        onClick: (e: Event): void => {
+          e.preventDefault()
+          userStore.logOut()
+        },
+      }),
     });
 
     userStore.subscribe((user) => {
@@ -110,7 +119,7 @@ export default class UserProfilePreview extends Block {
           <div class="user-profile__item"><a href="/userprofileedit">Изменить данные</a></div>
           <div class="user-profile__item"><a href="/userprofilepasswordedit">Изменить пароль</a></div>
           <div class="user-profile__item">
-            <a class="user-profile__item_color-red" href="/logout">Выйти</a>
+            {{{ ButtonLogout }}}
           </div>
         </section>
       </section>

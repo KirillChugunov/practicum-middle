@@ -26,6 +26,7 @@ export default class ChatCard extends Block<TChatCardProps, TChatCardChildren> {
 
     if (props.avatar) {
       children.ChatAvatar = new ChatAvatar({
+        isTitle: false,
         avatar: props.avatar,
         chatId: props.chatId,
       });

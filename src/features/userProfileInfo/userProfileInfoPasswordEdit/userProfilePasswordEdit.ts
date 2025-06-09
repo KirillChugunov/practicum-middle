@@ -44,7 +44,6 @@ export default class UserProfilePasswordEdit extends Block<
       <section class="user-profile__password-edit">
         {{{ ProfileTitles }}}
         {{{ UserProfilePasswordEdit }}}
-        {{{ ButtonSubmitEdit }}}
       </section>
     `;
   }

@@ -199,9 +199,9 @@ class ChatStore extends Store<TChatStore> {
     }
   }
 
-  updateUnreadCount(chatId: number, count: number) {
+  updateUnreadCount(chatId: number) {
     const updatedChats = this.getState().chats.map(chat =>
-      chat.id === chatId ? { ...chat, unread_count: count } : chat
+      chat.id === chatId ? { ...chat, unread_count: 0 } : chat
     );
     this.setState({ ...this.getState(), chats: updatedChats });
   }
@@ -210,30 +210,43 @@ class ChatStore extends Store<TChatStore> {
     try {
       const res = await httpTransport.get(`${apiConfig.getNewMessagesCount}/${chatId}`);
       const { unread_count } = JSON.parse(res.responseText);
-      this.updateUnreadCount(chatId, unread_count);
+      this.updateUnreadCount(chatId);
       return unread_count;
     } catch (e) {
       console.error('Ошибка при получении количества новых сообщений:', e);
       return null;
     }
   }
-  async addUsersToChat(chatId: string, users: Array<number>) {
+  async addUsersToChat(users: number[]): Promise<void> {
+    const chatId = this.getState().selectedChatId;
+    if (!chatId) {
+      console.error('Чат не выбран');
+      return;
+    }
+
     try {
       await httpTransport.put(apiConfig.addUsersToChat, {
         data: { users, chatId },
-      })
-      await this.fetchChatUsers(chatId)
+      });
+
+      await this.fetchChatUsers(String(chatId));
     } catch (e) {
-      console.error('Ошибка при добавлении пользователей:', e)
+      console.error('Ошибка при добавлении пользователей:', e);
     }
   }
 
-  async removeUsersFromChat(chatId: string, users: number) {
+
+  async removeUsersFromChat(users: number[]) {
+    const chatId = this.getState().selectedChatId;
+    if (!chatId) {
+      console.error('Чат не выбран');
+      return;
+    }
     try {
       await httpTransport.delete(apiConfig.removeUsersFromChat, {
         data: { users, chatId },
       })
-      await this.fetchChatUsers(chatId)
+      await this.fetchChatUsers(String(chatId))
     } catch (e) {
       console.error('Ошибка при удалении пользователей:', e)
     }

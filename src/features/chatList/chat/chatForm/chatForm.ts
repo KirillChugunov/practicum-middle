@@ -70,6 +70,12 @@ export default class ChatForm extends Block<ChatFormProps, ChatFormChildren> {
       }
     });
   }
+  componentDidUpdate(oldProps: ChatFormProps, newProps: ChatFormProps): boolean {
+    if (oldProps.chatWS !== newProps.chatWS) {
+      this.chatWS = newProps.chatWS;
+    }
+    return true;
+  }
 
   override render(): string {
     return `

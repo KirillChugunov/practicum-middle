@@ -100,7 +100,6 @@ export default class Chat extends Block<ChatProps, ChatChildren> {
 
     this.unsubscribe = this.chatWS.store.subscribe((state) => {
       const currentUserId = userStore.getState().id;
-
       const messages = state.messages
         .map((msg: ChatMessage) => {
           try {
@@ -125,7 +124,7 @@ export default class Chat extends Block<ChatProps, ChatChildren> {
 
     await chatStore.fetchChatUsers(chatId);
 
-    this.children.ChatTitle.setProps({ chatId }); // удалили users
+    this.children.ChatTitle.setProps({ chatId });
   }
 
   override render(): string {

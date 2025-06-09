@@ -7,6 +7,7 @@ type TAddFileModalContentProps = {
   isFileInput?: boolean;
   onDone?: () => void;
   chatWS: ChatWebSocket;
+  isOpen: boolean;
 };
 
 type TAddFileModalContentChildren = {
@@ -51,6 +52,9 @@ export default class AddFileModalContent extends Block<
   ): boolean {
     if (oldProps.chatWS !== newProps.chatWS) {
       this.setProps({ chatWS: newProps.chatWS });
+    }
+    if (oldProps.isOpen !== newProps.isOpen) {
+      this.setProps({ isOpen: newProps.isOpen });
     }
     return true;
   }

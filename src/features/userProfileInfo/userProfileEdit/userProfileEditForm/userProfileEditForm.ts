@@ -1,6 +1,6 @@
-import { Block, Button, FormManager, InputField } from '@shared';
-import EventBus from '@/shared/core/eventBus/eventBus.ts';
-import userStore from '@/store/userStore/userStore.ts';
+import { Block, Button, FormManager, InputField } from '@shared'
+import EventBus from '@/shared/core/eventBus/eventBus.ts'
+import userStore from '@/store/userStore/userStore.ts'
 
 interface User {
   email: string;
@@ -22,11 +22,11 @@ interface UserProfileEditFormChildren {
 }
 
 export default class UserProfileEditForm extends Block {
-  private readonly formManager: FormManager;
+  private readonly formManager: FormManager
 
   constructor() {
-    const eventBus = new EventBus<'submit'>();
-    const formManager = new FormManager();
+    const eventBus = new EventBus<'submit'>()
+    const formManager = new FormManager()
 
     super('form', {
       className: 'user-profile-edit__grid',
@@ -38,9 +38,9 @@ export default class UserProfileEditForm extends Block {
         eventBus,
         profile: true,
         onBlur: (e: Event) => {
-          const field = this.children.Email;
+          const field = this.children.Email
           if (field instanceof InputField) {
-            formManager.validateField(e, field);
+            formManager.validateField(e, field)
           }
         },
       }),
@@ -52,9 +52,9 @@ export default class UserProfileEditForm extends Block {
         eventBus,
         profile: true,
         onBlur: (e: Event) => {
-          const field = this.children.Login;
+          const field = this.children.Login
           if (field instanceof InputField) {
-            formManager.validateField(e, field);
+            formManager.validateField(e, field)
           }
         },
       }),
@@ -66,9 +66,9 @@ export default class UserProfileEditForm extends Block {
         eventBus,
         profile: true,
         onBlur: (e: Event) => {
-          const field = this.children.FirstName;
+          const field = this.children.FirstName
           if (field instanceof InputField) {
-            formManager.validateField(e, field);
+            formManager.validateField(e, field)
           }
         },
       }),
@@ -80,9 +80,9 @@ export default class UserProfileEditForm extends Block {
         eventBus,
         profile: true,
         onBlur: (e: Event) => {
-          const field = this.children.SecondName;
+          const field = this.children.SecondName
           if (field instanceof InputField) {
-            formManager.validateField(e, field);
+            formManager.validateField(e, field)
           }
         },
       }),
@@ -94,9 +94,9 @@ export default class UserProfileEditForm extends Block {
         eventBus,
         profile: true,
         onBlur: (e: Event) => {
-          const field = this.children.ChatName;
+          const field = this.children.ChatName
           if (field instanceof InputField) {
-            formManager.validateField(e, field);
+            formManager.validateField(e, field)
           }
         },
       }),
@@ -108,9 +108,9 @@ export default class UserProfileEditForm extends Block {
         eventBus,
         profile: true,
         onBlur: (e: Event) => {
-          const field = this.children.Phone;
+          const field = this.children.Phone
           if (field instanceof InputField) {
-            formManager.validateField(e, field);
+            formManager.validateField(e, field)
           }
         },
       }),
@@ -120,10 +120,10 @@ export default class UserProfileEditForm extends Block {
         variant: 'primary',
         type: 'submit',
         onClick: (e: Event): void => {
-          e.preventDefault();
-          eventBus.emit('submit');
+          e.preventDefault()
+          eventBus.emit('submit')
           formManager.formSubmit(e, async () => {
-            const formData = formManager.getState().formState;
+            const formData = formManager.getState().formState
 
             const userData: User = {
               email: formData.email,
@@ -132,42 +132,42 @@ export default class UserProfileEditForm extends Block {
               second_name: formData.second_name,
               display_name: formData.display_name,
               phone: formData.phone,
-            };
+            }
 
-            await userStore.updateProfile(userData);
-          });
+            await userStore.updateProfile(userData)
+          })
         },
       }),
-    });
+    })
 
-    this.formManager = formManager;
+    this.formManager = formManager
 
     userStore.subscribe((user: User) => {
-      this.populateFormFields(user);
-    });
+      this.populateFormFields(user)
+    })
 
-    userStore.loadUser();
+    userStore.loadUser()
   }
 
   private populateFormFields(user: User): void {
     const register = (
       field: keyof UserProfileEditFormChildren,
       value: string,
-      name: string
+      name: string,
     ): void => {
-      const input = this.children[field];
+      const input = this.children[field]
       if (input instanceof InputField) {
-        input.setProps({ value });
-        this.formManager.registerField(name, value);
+        input.setProps({ value })
+        this.formManager.registerField(name, value)
       }
-    };
+    }
 
-    register('Email', user.email, 'email');
-    register('Login', user.login, 'login');
-    register('FirstName', user.first_name, 'first_name');
-    register('SecondName', user.second_name, 'second_name');
-    register('ChatName', user.display_name ?? '', 'display_name');
-    register('Phone', user.phone, 'phone');
+    register('Email', user.email, 'email')
+    register('Login', user.login, 'login')
+    register('FirstName', user.first_name, 'first_name')
+    register('SecondName', user.second_name, 'second_name')
+    register('ChatName', user.display_name ?? '', 'display_name')
+    register('Phone', user.phone, 'phone')
   }
 
   public render(): string {
@@ -181,6 +181,6 @@ export default class UserProfileEditForm extends Block {
       <div class="user-profile-edit__container">
         {{{ ButtonSubmitEdit }}}
       </div>
-    `;
+    `
   }
 }

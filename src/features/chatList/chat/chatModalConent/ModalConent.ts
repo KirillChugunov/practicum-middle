@@ -69,7 +69,7 @@ export default class AddUserModalContent extends Block<
     const login = this.formManager.getState().formState.login?.trim();
     if (!login) return;
 
-    const { chatId, isAdd, onDone } = this.props;
+    const { isAdd, onDone } = this.props;
 
     try {
       const users = await chatStore.searchUserByLogin(login);
@@ -81,9 +81,9 @@ export default class AddUserModalContent extends Block<
       }
 
       if (isAdd) {
-        await chatStore.addUsersToChat(chatId, [userId]);
+        await chatStore.addUsersToChat([userId]);
       } else {
-        await chatStore.removeUsersFromChat(chatId, userId);
+        await chatStore.removeUsersFromChat([userId]);
       }
 
       onDone?.();

@@ -1,7 +1,6 @@
 import { Block } from '@shared';
 import modalService from '@/shared/core/modalService/modalService.ts';
 import AddChatAvatarModalContent from '@/features/chatList/chat/chatAvatarModal/ModalConent.ts';
-import chatStore from '@/store/chatStore/chatStore.ts';
 import defaultChatAvatar from '@/assets/icons/chatListAvatar.svg';
 
 interface ChatAvatarProps {
@@ -41,23 +40,6 @@ export default class ChatAvatar extends Block {
           },
         }),
     });
-
-    if (!isTitle) {
-      this.unsubscribe = chatStore.subscribe((state) => {
-        const selectedChat = state.chats.find(
-          (chat) => chat.id === state.selectedChatId
-        );
-
-        if (selectedChat) {
-          this.setProps({
-            avatar: selectedChat.avatar
-              ? `https://ya-praktikum.tech/api/v2/resources${selectedChat.avatar}`
-              : defaultChatAvatar,
-            chatId: String(selectedChat.id),
-          });
-        }
-      });
-    }
   }
 
   public componentWillUnmount(): void {

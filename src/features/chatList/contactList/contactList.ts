@@ -48,7 +48,6 @@ export default class ContactList extends Block<TContactListProps, TContactListCh
 
   private updateChatCards(): void {
     const state = chatStore.getState();
-
     this.children.ChatCards = state.chats.map((chat) => {
       return new ChatCard({
         userName: chat.title,
@@ -63,6 +62,7 @@ export default class ContactList extends Block<TContactListProps, TContactListCh
         newMessageCount: String(chat.unread_count ?? 0),
         chatId: String(chat.id),
         onClick: () => {
+          chatStore.selectChat(chat.id);
           this.props.onChatSelect(chat.id, chat.title, chat.avatar);
         },
       });

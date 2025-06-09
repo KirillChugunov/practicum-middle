@@ -65,7 +65,6 @@ export class ChatWebSocket {
 
   private async start(): Promise<void> {
     const user = userStore.getState()
-
     if (!user?.id) {
       this.store.setState({ error: 'No user ID', isLoading: false })
       return
@@ -80,7 +79,6 @@ export class ChatWebSocket {
 
       const url = `wss://ya-praktikum.tech/ws/chats/${user.id}/${this.chatId}/${token}`
       this.socket = new WebSocket(url)
-
       this.socket.addEventListener('open', () => this.onOpen())
       this.socket.addEventListener('message', (event: MessageEvent<string>) =>
         this.onMessage(event),
@@ -160,13 +158,20 @@ export class ChatWebSocket {
 
     const totalUnread = await chatStore.fetchNewMessagesCount(chatId)
     const batchSize = 20
-    if (totalUnread)
+    if (totalUnread) {
       for (let offset = 0; offset < totalUnread; offset += batchSize) {
+        console.log(totalUnread)
         this.send({
           type: 'get old',
           content: String(offset),
         })
       }
+    } else {
+      this.send({
+        type: 'get old',
+        content: String(0),
+      })
+    }
   }
 
   public close(): void {

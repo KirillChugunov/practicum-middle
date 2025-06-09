@@ -57,8 +57,6 @@ export default class InputField extends Block {
 
     return true;
   }
-
-
   public render(): string {
     return `
       {{#if profile }}
