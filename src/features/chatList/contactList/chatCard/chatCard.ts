@@ -1,35 +1,35 @@
-import { Block } from '@shared';
-import { ChatAvatar } from '@/features';
+import { Block } from '@shared'
+import { ChatAvatar } from '@/features'
 
 type TLastMessagePreview = {
-  owner?: string;
-  message?: string;
-  timeStamp?: string;
-};
+  owner?: string
+  message?: string
+  timeStamp?: string
+}
 
 type TChatCardProps = {
-  userName?: string;
-  avatar: string | null;
-  lastMessagePreview?: TLastMessagePreview;
-  newMessageCount?: string;
-  chatId: string;
-  onClick: () => void;
-};
+  userName?: string
+  avatar: string | null
+  lastMessagePreview?: TLastMessagePreview
+  newMessageCount?: string
+  chatId: string
+  onClick: () => void
+}
 
 type TChatCardChildren = {
-  ChatAvatar?: ChatAvatar;
-};
+  ChatAvatar?: ChatAvatar
+}
 
 export default class ChatCard extends Block<TChatCardProps, TChatCardChildren> {
   constructor(props: TChatCardProps) {
-    const children: TChatCardChildren = {};
+    const children: TChatCardChildren = {}
 
     if (props.avatar) {
       children.ChatAvatar = new ChatAvatar({
         isTitle: false,
         avatar: props.avatar,
         chatId: props.chatId,
-      });
+      })
     }
 
     super('div', {
@@ -39,7 +39,7 @@ export default class ChatCard extends Block<TChatCardProps, TChatCardChildren> {
       events: {
         click: props.onClick,
       },
-    });
+    })
   }
 
   render(): string {
@@ -60,6 +60,6 @@ export default class ChatCard extends Block<TChatCardProps, TChatCardChildren> {
           </small>
         </div>
       </div>
-    `;
+    `
   }
 }

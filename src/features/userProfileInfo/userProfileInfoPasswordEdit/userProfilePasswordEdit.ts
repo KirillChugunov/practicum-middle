@@ -1,18 +1,18 @@
-import { Block, Button } from '@shared';
+import { Block, Button } from '@shared'
 import {
   UserProfileEditGoBack,
   UserProfilePasswordEditForm,
   UserProfileTitles,
-} from '@/features';
+} from '@/features'
 
-type TUserProfilePasswordEditProps = Record<string, never>;
+type TUserProfilePasswordEditProps = Record<string, never>
 
 type TUserProfilePasswordEditChildren = {
-  GoBackButton: UserProfileEditGoBack;
-  ProfileTitles: UserProfileTitles;
-  ButtonSubmitEdit: Button;
-  UserProfilePasswordEdit: UserProfilePasswordEditForm;
-};
+  GoBackButton: UserProfileEditGoBack
+  ProfileTitles: UserProfileTitles
+  ButtonSubmitEdit: Button
+  UserProfilePasswordEdit: UserProfilePasswordEditForm
+}
 
 export default class UserProfilePasswordEdit extends Block<
   TUserProfilePasswordEditProps,
@@ -30,12 +30,12 @@ export default class UserProfilePasswordEdit extends Block<
         variant: 'primary',
         type: 'submit',
         onClick: (e: Event) => {
-          e.preventDefault();
-          console.log(e.target);
+          e.preventDefault()
+          console.log(e.target)
         },
       }),
       UserProfilePasswordEdit: new UserProfilePasswordEditForm(),
-    });
+    })
   }
 
   override render(): string {
@@ -45,6 +45,6 @@ export default class UserProfilePasswordEdit extends Block<
         {{{ ProfileTitles }}}
         {{{ UserProfilePasswordEdit }}}
       </section>
-    `;
+    `
   }
 }

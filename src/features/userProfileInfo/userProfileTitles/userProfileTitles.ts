@@ -1,14 +1,14 @@
-import { Block } from '@shared';
-import modalService from '@/shared/core/modalService/modalService.ts';
-import UserProfileAvatarUpdateContent from '@/features/userProfileInfo/userProfileAvatarUpdate/ModalConent.ts';
-import userStore from '@/store/userStore/userStore.ts';
+import { Block } from '@shared'
+import modalService from '@/shared/core/modalService/modalService.ts'
+import UserProfileAvatarUpdateContent from '@/features/userProfileInfo/userProfileAvatarUpdate/ModalConent.ts'
+import userStore from '@/store/userStore/userStore.ts'
 
 export type TUserProfileTitles = {
-  name: string;
-};
+  name: string
+}
 
 export default class UserProfileTitles extends Block {
-  private unsubscribe: (() => void) | null = null;
+  private unsubscribe: (() => void) | null = null
 
   constructor(props: TUserProfileTitles) {
     super('section', {
@@ -17,34 +17,34 @@ export default class UserProfileTitles extends Block {
       profilePicture: userStore.getState().avatar,
       events: {
         click: (event: Event) => {
-          const target = event.target as HTMLElement;
-          const button = target.closest('.user-profile_button');
+          const target = event.target as HTMLElement
+          const button = target.closest('.user-profile_button')
           if (button) {
             modalService.open(UserProfileAvatarUpdateContent, {
               isFileInput: true,
               isOpen: true,
               onDone: () => modalService.close(),
-            });
+            })
           }
         },
       },
-    });
+    })
 
     this.unsubscribe = userStore.subscribe((user) => {
       const name =
         user.display_name?.trim() ||
-        `${user.first_name} ${user.second_name}`.trim();
+        `${user.first_name} ${user.second_name}`.trim()
 
       this.setProps({
         name,
         profilePicture: user.avatar,
-      });
-    });
+      })
+    })
   }
 
   componentWillUnmount() {
     if (this.unsubscribe) {
-      this.unsubscribe();
+      this.unsubscribe()
     }
   }
 
@@ -60,6 +60,6 @@ export default class UserProfileTitles extends Block {
         <p class="text-overlay">Поменять аватар</p>
       </button>
       <h1>{{name}}</h1>
-    `;
+    `
   }
 }

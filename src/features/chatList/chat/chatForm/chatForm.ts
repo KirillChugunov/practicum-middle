@@ -1,20 +1,20 @@
-import { Block, FormManager, IconButton, Input } from '@shared';
-import { ChatWebSocket } from '@/shared/core/ws/ws.ts';
+import { Block, FormManager, IconButton, Input } from '@shared'
+import { ChatWebSocket } from '@/shared/core/ws/ws.ts'
 
 type ChatFormProps = {
-  chatWS?: ChatWebSocket;
+  chatWS?: ChatWebSocket
 }
 
-type  ChatFormChildren = {
-  ChatInput: Input;
-  SentButton: IconButton;
+type ChatFormChildren = {
+  ChatInput: Input
+  SentButton: IconButton
 }
 
 export default class ChatForm extends Block<ChatFormProps, ChatFormChildren> {
-  private chatWS?: ChatWebSocket;
+  private chatWS?: ChatWebSocket
 
   constructor(props: ChatFormProps) {
-    const formManager = new FormManager();
+    const formManager = new FormManager()
 
     const ChatInput = new Input({
       className: 'chat-section__input',
@@ -22,13 +22,13 @@ export default class ChatForm extends Block<ChatFormProps, ChatFormChildren> {
       name: 'message',
       events: {
         blur: (e: Event) => {
-          formManager.validateField(e, ChatInput);
+          formManager.validateField(e, ChatInput)
         },
         input: (e: Event) => {
-          formManager.validateField(e, ChatInput);
+          formManager.validateField(e, ChatInput)
         },
       },
-    });
+    })
 
     const SentButton = new IconButton({
       buttonIcon: './src/assets/icons/arrow.svg',
@@ -38,10 +38,10 @@ export default class ChatForm extends Block<ChatFormProps, ChatFormChildren> {
         type: 'submit',
       },
       onClick: (e: Event): void => {
-        e.preventDefault();
-        this.eventBus().emit('submit');
+        e.preventDefault()
+        this.eventBus().emit('submit')
       },
-    });
+    })
 
     super('form', {
       className: 'chat-section__form',
@@ -50,37 +50,41 @@ export default class ChatForm extends Block<ChatFormProps, ChatFormChildren> {
       chatWS: props.chatWS,
       events: {
         submit: (e: SubmitEvent): void => {
-          e.preventDefault();
-          this.eventBus().emit('submit');
+          e.preventDefault()
+          this.eventBus().emit('submit')
         },
       },
-    });
+    })
 
-    this.chatWS = props.chatWS;
+    this.chatWS = props.chatWS
 
     this.eventBus().on('submit', () => {
-      const message = formManager.getState().formState.message?.trim();
+      const message = formManager.getState().formState.message?.trim()
       if (message && this.chatWS) {
-        this.chatWS.sendText(message);
+        this.chatWS.sendText(message)
 
-        const inputEl = this.children.ChatInput.getContent() as HTMLInputElement | null;
+        const inputEl =
+          this.children.ChatInput.getContent() as HTMLInputElement | null
         if (inputEl) {
-          inputEl.value = '';
+          inputEl.value = ''
         }
       }
-    });
+    })
   }
-  componentDidUpdate(oldProps: ChatFormProps, newProps: ChatFormProps): boolean {
+  componentDidUpdate(
+    oldProps: ChatFormProps,
+    newProps: ChatFormProps,
+  ): boolean {
     if (oldProps.chatWS !== newProps.chatWS) {
-      this.chatWS = newProps.chatWS;
+      this.chatWS = newProps.chatWS
     }
-    return true;
+    return true
   }
 
   override render(): string {
     return `
       {{{ ChatInput }}}
       {{{ SentButton }}}
-    `;
+    `
   }
 }

@@ -29,7 +29,7 @@ export default class InputField extends Block {
         disabled: props.disabled ?? false,
         className: props.profile ? 'profile_input' : 'input__element',
         value: props.value,
-        placeholder: props.placeHolder
+        placeholder: props.placeHolder,
       }),
       type: props.type,
     })
@@ -42,9 +42,12 @@ export default class InputField extends Block {
     })
   }
 
-  override componentDidUpdate(_: TInputFieldProps, newProps: TInputFieldProps): boolean {
+  override componentDidUpdate(
+    _: TInputFieldProps,
+    newProps: TInputFieldProps,
+  ): boolean {
     if (this.children.Input instanceof Block) {
-      const value = newProps.value ?? '';
+      const value = newProps.value ?? ''
 
       this.children.Input.setProps({
         value,
@@ -52,10 +55,10 @@ export default class InputField extends Block {
           ...this.children.Input.props.attrs,
           value,
         },
-      });
+      })
     }
 
-    return true;
+    return true
   }
   public render(): string {
     return `

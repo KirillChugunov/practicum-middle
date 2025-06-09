@@ -1,9 +1,9 @@
-import Block from '@/shared/core/block/block.ts';
+import Block from '@/shared/core/block/block.ts'
 
 type DragDropInputProps = {
-  onFileDrop: (file: File) => void;
-  className?: string;
-};
+  onFileDrop: (file: File) => void
+  className?: string
+}
 
 export default class ImgInput extends Block {
   constructor(props: DragDropInputProps) {
@@ -13,22 +13,22 @@ export default class ImgInput extends Block {
       },
       events: {
         dragover: (e: DragEvent) => {
-          e.preventDefault();
-          (e.currentTarget as HTMLElement).classList.add('drag-over');
+          e.preventDefault()
+          ;(e.currentTarget as HTMLElement).classList.add('drag-over')
         },
         dragleave: (e: DragEvent) => {
-          e.preventDefault();
-          (e.currentTarget as HTMLElement).classList.remove('drag-over');
+          e.preventDefault()
+          ;(e.currentTarget as HTMLElement).classList.remove('drag-over')
         },
         drop: (e: DragEvent) => {
-          e.preventDefault();
-          const files = e.dataTransfer?.files;
+          e.preventDefault()
+          const files = e.dataTransfer?.files
           if (files && files.length > 0) {
-            props.onFileDrop(files[0]);
+            props.onFileDrop(files[0])
           }
-          (e.currentTarget as HTMLElement).classList.remove('drag-over');
+          ;(e.currentTarget as HTMLElement).classList.remove('drag-over')
         },
       },
-    });
+    })
   }
 }

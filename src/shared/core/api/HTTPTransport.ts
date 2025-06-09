@@ -8,11 +8,11 @@ const METHODS = {
 type Method = keyof typeof METHODS
 
 type RequestOptions = {
-  timeout?: number;
-  headers?: Record<string, string>;
-  method?: Method;
-  data?: Record<string, unknown> | FormData;
-};
+  timeout?: number
+  headers?: Record<string, string>
+  method?: Method
+  data?: Record<string, unknown> | FormData
+}
 
 function queryStringify(data: Record<string, string>): string {
   if (typeof data !== 'object' || data === null) {
@@ -90,5 +90,5 @@ class HTTPTransport {
   }
 }
 
-const httpTransport = new HTTPTransport();
+const httpTransport = new HTTPTransport()
 export default httpTransport

@@ -1,12 +1,12 @@
-import GoBackIcon from '../../../assets/icons/arrow.svg';
-import { Block, IconButton } from '@shared';
-import router from '@/shared/core/router/router.ts';
+import GoBackIcon from '../../../assets/icons/arrow.svg'
+import { Block, IconButton } from '@shared'
+import router from '@/shared/core/router/router.ts'
 
-type TUserProfileEditGoBackProps = Record<string, never>;
+type TUserProfileEditGoBackProps = Record<string, never>
 
 type TUserProfileEditGoBackChildren = {
-  GoBackButton: IconButton;
-};
+  GoBackButton: IconButton
+}
 
 export default class UserProfileEditGoBack extends Block<
   TUserProfileEditGoBackProps,
@@ -21,12 +21,12 @@ export default class UserProfileEditGoBack extends Block<
         buttonIcon: GoBackIcon,
         onClick: () => router.back(),
       }),
-    });
+    })
   }
 
   override render(): string {
     return `
       {{{ GoBackButton }}}
-    `;
+    `
   }
 }

@@ -6,7 +6,7 @@ type TIconButton = {
   alt: string
   direction?: string
   attrs?: {
-    type: string;
+    type: string
   }
 }
 

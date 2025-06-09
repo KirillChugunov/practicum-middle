@@ -1,21 +1,28 @@
-import { Block } from '@shared';
-import chatStore from '@/store/chatStore/chatStore.ts';
-import { ChatCard } from '@/features';
-import { formatTime } from '@/shared/utils/timeTrimmer.ts';
-import SearchInputField from '@/features/chatList/contactList/searchImput/searchInput.ts';
+import { Block } from '@shared'
+import chatStore from '@/store/chatStore/chatStore.ts'
+import { ChatCard } from '@/features'
+import { formatTime } from '@/shared/utils/timeTrimmer.ts'
+import SearchInputField from '@/features/chatList/contactList/searchImput/searchInput.ts'
 
 type TContactListProps = {
-  onChatSelect: (chatId: number, userName: string, avatar: string | null) => void;
-  className?: string;
-};
+  onChatSelect: (
+    chatId: number,
+    userName: string,
+    avatar: string | null,
+  ) => void
+  className?: string
+}
 
 type TContactListChildren = {
-  SearchInput: SearchInputField;
-  ChatCards?: ChatCard[];
-};
+  SearchInput: SearchInputField
+  ChatCards?: ChatCard[]
+}
 
-export default class ContactList extends Block<TContactListProps, TContactListChildren> {
-  private unsubscribe?: () => void;
+export default class ContactList extends Block<
+  TContactListProps,
+  TContactListChildren
+> {
+  private unsubscribe?: () => void
 
   constructor(props: TContactListProps) {
     const searchInput = new SearchInputField({
@@ -23,31 +30,31 @@ export default class ContactList extends Block<TContactListProps, TContactListCh
       name: 'search',
       placeHolder: 'Поиск',
       onSearch: (value: string): void => {
-        chatStore.fetchChats(undefined, undefined, value || undefined);
+        chatStore.fetchChats(undefined, undefined, value || undefined)
       },
-    });
+    })
 
     super('section', {
       ...props,
       SearchInput: searchInput,
       className: 'contact-list',
-    });
+    })
   }
 
   override async componentDidMount(): Promise<void> {
-    this.unsubscribe = chatStore.subscribe(() => this.updateChatCards());
+    this.unsubscribe = chatStore.subscribe(() => this.updateChatCards())
 
-    await chatStore.fetchChats();
-    this.updateChatCards();
+    await chatStore.fetchChats()
+    this.updateChatCards()
   }
 
   override destroy(): void {
-    this.unsubscribe?.();
-    super.destroy();
+    this.unsubscribe?.()
+    super.destroy()
   }
 
   private updateChatCards(): void {
-    const state = chatStore.getState();
+    const state = chatStore.getState()
     this.children.ChatCards = state.chats.map((chat) => {
       return new ChatCard({
         userName: chat.title,
@@ -62,13 +69,13 @@ export default class ContactList extends Block<TContactListProps, TContactListCh
         newMessageCount: String(chat.unread_count ?? 0),
         chatId: String(chat.id),
         onClick: () => {
-          chatStore.selectChat(chat.id);
-          this.props.onChatSelect(chat.id, chat.title, chat.avatar);
+          chatStore.selectChat(chat.id)
+          this.props.onChatSelect(chat.id, chat.title, chat.avatar)
         },
-      });
-    });
+      })
+    })
 
-    this.forceUpdate();
+    this.forceUpdate()
   }
 
   override render(): string {
@@ -82,6 +89,6 @@ export default class ContactList extends Block<TContactListProps, TContactListCh
       <div class="contact-list__contacts">
         {{{ ChatCards }}}
       </div>
-    `;
+    `
   }
 }

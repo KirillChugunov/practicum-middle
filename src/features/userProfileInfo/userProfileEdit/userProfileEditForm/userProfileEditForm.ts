@@ -3,22 +3,22 @@ import EventBus from '@/shared/core/eventBus/eventBus.ts'
 import userStore from '@/store/userStore/userStore.ts'
 
 interface User {
-  email: string;
-  login: string;
-  first_name: string;
-  second_name: string;
-  display_name?: string;
-  phone: string;
+  email: string
+  login: string
+  first_name: string
+  second_name: string
+  display_name?: string
+  phone: string
 }
 
 interface UserProfileEditFormChildren {
-  Email: InputField;
-  Login: InputField;
-  FirstName: InputField;
-  SecondName: InputField;
-  ChatName: InputField;
-  Phone: InputField;
-  ButtonSubmitEdit: Button;
+  Email: InputField
+  Login: InputField
+  FirstName: InputField
+  SecondName: InputField
+  ChatName: InputField
+  Phone: InputField
+  ButtonSubmitEdit: Button
 }
 
 export default class UserProfileEditForm extends Block {

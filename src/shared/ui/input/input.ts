@@ -3,7 +3,9 @@ import Block from '../../core/block/block.ts'
 type InputProps = {
   name: string
   events?: Partial<{
-    [K in keyof GlobalEventHandlersEventMap]?: (e: GlobalEventHandlersEventMap[K]) => void;
+    [K in keyof GlobalEventHandlersEventMap]?: (
+      e: GlobalEventHandlersEventMap[K],
+    ) => void
   }>
   placeholder?: string
   disabled?: boolean
@@ -30,7 +32,10 @@ export default class Input extends Block {
     this.updateDOMValue((this.props as InputProps).value)
   }
 
-  override componentDidUpdate(oldProps: Record<string, unknown>, newProps: Record<string, unknown>): boolean {
+  override componentDidUpdate(
+    oldProps: Record<string, unknown>,
+    newProps: Record<string, unknown>,
+  ): boolean {
     const oldVal = (oldProps as InputProps).value
     const newVal = (newProps as InputProps).value
 

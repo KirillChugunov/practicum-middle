@@ -1,39 +1,42 @@
-import { Block, IconButton } from '@shared';
-import { ChatAvatar } from '@/features';
-import FriendControlDropDown from '@/features/chatList/chat/friendControlsDropDown/friendControlDropDown.ts';
-import chatStore from '@/store/chatStore/chatStore.ts';
-import defaultChatAvatar from '@/assets/icons/chatListAvatar.svg';
+import { Block, IconButton } from '@shared'
+import { ChatAvatar } from '@/features'
+import FriendControlDropDown from '@/features/chatList/chat/friendControlsDropDown/friendControlDropDown.ts'
+import chatStore from '@/store/chatStore/chatStore.ts'
+import defaultChatAvatar from '@/assets/icons/chatListAvatar.svg'
 
 type TChatTitleProps = {
-  chatId: string | null;
-  className?: string;
-  UserNames?: string;
-};
+  chatId: string | null
+  className?: string
+  UserNames?: string
+}
 
 type TChatTitleChildren = {
-  UserAvatars: ChatAvatar[];
-  MoreButton: IconButton;
-  DropDown: FriendControlDropDown;
-};
+  UserAvatars: ChatAvatar[]
+  MoreButton: IconButton
+  DropDown: FriendControlDropDown
+}
 
-export default class ChatTitle extends Block<TChatTitleProps, TChatTitleChildren> {
-  private unsubscribe: (() => void) | null = null;
-  private isFriendControlDropDownOpen = false;
+export default class ChatTitle extends Block<
+  TChatTitleProps,
+  TChatTitleChildren
+> {
+  private unsubscribe: (() => void) | null = null
+  private isFriendControlDropDownOpen = false
 
   constructor(props: TChatTitleProps) {
     const dropDown = new FriendControlDropDown({
       isOpen: false,
       chatId: props.chatId,
-    });
+    })
 
     const moreButton = new IconButton({
       buttonIcon: './src/assets/icons/moreIcon.svg',
       alt: 'More icon',
       onClick: (e: Event): void => {
-        e.preventDefault();
-        this.toggleDropDown();
+        e.preventDefault()
+        this.toggleDropDown()
       },
-    });
+    })
 
     super('div', {
       ...props,
@@ -42,56 +45,56 @@ export default class ChatTitle extends Block<TChatTitleProps, TChatTitleChildren
       DropDown: dropDown,
       MoreButton: moreButton,
       UserAvatars: [],
-    });
+    })
 
     this.unsubscribe = chatStore.subscribe((state) => {
-      const { chatId } = this.props;
-      if (!chatId) return;
+      const { chatId } = this.props
+      if (!chatId) return
 
-      const users = state.chatUserMap?.[chatId] ?? [];
+      const users = state.chatUserMap?.[chatId] ?? []
 
       this.children.UserAvatars = users.map((user) => {
         return new ChatAvatar({
           isTitle: true,
           avatar: user.avatar ?? defaultChatAvatar,
           className: 'chat-section__avatar',
-        });
-      });
+        })
+      })
 
       this.setProps({
         UserNames: users.map((u) => u.first_name).join(', '),
-      });
-    });
+      })
+    })
 
     if (props.chatId) {
-      chatStore.fetchChatUsers(props.chatId);
+      chatStore.fetchChatUsers(props.chatId)
     }
   }
 
   private toggleDropDown(): void {
-    this.isFriendControlDropDownOpen = !this.isFriendControlDropDownOpen;
+    this.isFriendControlDropDownOpen = !this.isFriendControlDropDownOpen
 
     this.children.DropDown.setProps({
       isOpen: this.isFriendControlDropDownOpen,
       chatId: this.props.chatId,
-    });
+    })
   }
 
   override componentDidUpdate(
     oldProps: TChatTitleProps,
-    newProps: TChatTitleProps
+    newProps: TChatTitleProps,
   ): boolean {
     if (oldProps.chatId !== newProps.chatId && newProps.chatId) {
-      chatStore.fetchChatUsers(newProps.chatId);
-      this.children.DropDown.setProps({ chatId: newProps.chatId });
+      chatStore.fetchChatUsers(newProps.chatId)
+      this.children.DropDown.setProps({ chatId: newProps.chatId })
     }
 
-    return true;
+    return true
   }
 
   override destroy(): void {
-    this.unsubscribe?.();
-    super.destroy();
+    this.unsubscribe?.()
+    super.destroy()
   }
 
   override render(): string {
@@ -106,6 +109,6 @@ export default class ChatTitle extends Block<TChatTitleProps, TChatTitleChildren
           {{{ DropDown }}}
         </div>
       </div>
-    `;
+    `
   }
 }

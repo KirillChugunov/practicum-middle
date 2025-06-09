@@ -1,9 +1,8 @@
 import { Block, Button, InputField } from '@shared'
-import { UserProfileEditGoBack, UserProfileTitles } from '@/features';
-import userStore, { TUser } from '@/store/userStore/userStore.ts';
+import { UserProfileEditGoBack, UserProfileTitles } from '@/features'
+import userStore, { TUser } from '@/store/userStore/userStore.ts'
 
 export default class UserProfilePreview extends Block {
-
   constructor() {
     super('div', {
       className: 'user-profile__container',
@@ -76,31 +75,36 @@ export default class UserProfilePreview extends Block {
           userStore.logOut()
         },
       }),
-    });
+    })
 
     userStore.subscribe((user) => {
-      this.updateFields(user);
-    });
+      this.updateFields(user)
+    })
   }
 
   private updateFields(user: TUser): void {
-    type InputFieldKeys = 'Email' | 'Login' | 'FirstName' | 'SecondName' | 'ChatName' | 'Phone';
+    type InputFieldKeys =
+      | 'Email'
+      | 'Login'
+      | 'FirstName'
+      | 'SecondName'
+      | 'ChatName'
+      | 'Phone'
 
     const update = (fieldKey: InputFieldKeys, value: string) => {
-      const field = this.children[fieldKey];
+      const field = this.children[fieldKey]
       if (field instanceof InputField) {
-        field.setProps({ value });
+        field.setProps({ value })
       }
-    };
+    }
 
-    update('Email', user.email);
-    update('Login', user.login);
-    update('FirstName', user.first_name);
-    update('SecondName', user.second_name);
-    update('ChatName', user.display_name ?? '');
-    update('Phone', user.phone);
+    update('Email', user.email)
+    update('Login', user.login)
+    update('FirstName', user.first_name)
+    update('SecondName', user.second_name)
+    update('ChatName', user.display_name ?? '')
+    update('Phone', user.phone)
   }
-
 
   render(): string {
     return `
@@ -123,6 +127,6 @@ export default class UserProfilePreview extends Block {
           </div>
         </section>
       </section>
-    `;
+    `
   }
 }

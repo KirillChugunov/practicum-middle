@@ -1,17 +1,17 @@
-import { Block } from '@shared';
+import { Block } from '@shared'
 import {
   UserProfileEditForm,
   UserProfileEditGoBack,
   UserProfileTitles,
-} from '@/features';
+} from '@/features'
 
-type TUserProfileEditProps = Record<string, never>;
+type TUserProfileEditProps = Record<string, never>
 
 type TUserProfileEditChildren = {
-  GoBackButton: UserProfileEditGoBack;
-  ProfileTitles: UserProfileTitles;
-  UserProfileEditForm: UserProfileEditForm;
-};
+  GoBackButton: UserProfileEditGoBack
+  ProfileTitles: UserProfileTitles
+  UserProfileEditForm: UserProfileEditForm
+}
 
 export default class UserProfileEdit extends Block<
   TUserProfileEditProps,
@@ -25,7 +25,7 @@ export default class UserProfileEdit extends Block<
         name: 'userName',
       }),
       UserProfileEditForm: new UserProfileEditForm(),
-    });
+    })
   }
 
   override render(): string {
@@ -35,6 +35,6 @@ export default class UserProfileEdit extends Block<
         {{{ ProfileTitles }}}
         {{{ UserProfileEditForm }}}
       </section>
-    `;
+    `
   }
 }

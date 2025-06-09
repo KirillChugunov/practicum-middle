@@ -1,4 +1,4 @@
-const baseApi = 'https://ya-praktikum.tech/api/v2';
+const baseApi = 'https://ya-praktikum.tech/api/v2'
 
 export const apiConfig = {
   auth: `${baseApi}/auth/signup`,
@@ -19,4 +19,4 @@ export const apiConfig = {
   updatePassword: `${baseApi}/user/password`,
   updateProfile: `${baseApi}/user/profile`,
   getNewMessagesCount: `${baseApi}/chats/new`,
-};
+}

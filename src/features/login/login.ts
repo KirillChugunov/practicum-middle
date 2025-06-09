@@ -1,22 +1,22 @@
-import { Block, Button, FormManager, InputField } from '@shared';
-import EventBus from '@/shared/core/eventBus/eventBus.ts';
-import router from '@/shared/core/router/router.ts';
-import userStore from '@/store/userStore/userStore.ts';
+import { Block, Button, FormManager, InputField } from '@shared'
+import EventBus from '@/shared/core/eventBus/eventBus.ts'
+import router from '@/shared/core/router/router.ts'
+import userStore from '@/store/userStore/userStore.ts'
 
-type TLoginProps = Record<string, never>;
+type TLoginProps = Record<string, never>
 type TLoginChildren = {
-  Login: InputField;
-  Password: InputField;
-  ButtonSubmitLogin: Button;
-  ButtonRegisterLink: Button;
-};
+  Login: InputField
+  Password: InputField
+  ButtonSubmitLogin: Button
+  ButtonRegisterLink: Button
+}
 
 export default class Login extends Block<TLoginProps, TLoginChildren> {
-  private eventBusInstance: EventBus<'submit'>;
+  private eventBusInstance: EventBus<'submit'>
 
   constructor() {
-    const eventBus = new EventBus<'submit'>();
-    const formManager = new FormManager();
+    const eventBus = new EventBus<'submit'>()
+    const formManager = new FormManager()
 
     const LoginInput = new InputField({
       label: 'Логин',
@@ -24,9 +24,9 @@ export default class Login extends Block<TLoginProps, TLoginChildren> {
       type: 'text',
       eventBus,
       onBlur: (e: Event) => {
-        formManager.validateField(e, LoginInput);
+        formManager.validateField(e, LoginInput)
       },
-    });
+    })
 
     const PasswordInput = new InputField({
       label: 'Пароль',
@@ -34,35 +34,35 @@ export default class Login extends Block<TLoginProps, TLoginChildren> {
       type: 'password',
       eventBus,
       onBlur: (e: Event) => {
-        formManager.validateField(e, PasswordInput);
+        formManager.validateField(e, PasswordInput)
       },
-    });
+    })
 
     const SubmitButton = new Button({
       label: 'Авторизоваться',
       variant: 'primary',
       type: 'submit',
       onClick: async (e: Event) => {
-        e.preventDefault();
-        this.eventBusInstance.emit('submit');
+        e.preventDefault()
+        this.eventBusInstance.emit('submit')
 
         await formManager.formSubmit(e, async () => {
-          const { formState } = formManager.getState();
-          await userStore.login(formState);
-          router.go('/chatlist');
-        });
+          const { formState } = formManager.getState()
+          await userStore.login(formState)
+          router.go('/chatlist')
+        })
       },
-    });
+    })
 
     const RegisterButton = new Button({
       label: 'Нет аккаунта?',
       variant: 'link',
       type: 'link',
       onClick: (e: Event) => {
-        e.preventDefault();
-        router.go('/singin');
+        e.preventDefault()
+        router.go('/singin')
       },
-    });
+    })
 
     super('div', {
       className: 'container',
@@ -70,9 +70,9 @@ export default class Login extends Block<TLoginProps, TLoginChildren> {
       Password: PasswordInput,
       ButtonSubmitLogin: SubmitButton,
       ButtonRegisterLink: RegisterButton,
-    });
+    })
 
-    this.eventBusInstance = eventBus;
+    this.eventBusInstance = eventBus
   }
 
   override render(): string {
@@ -86,6 +86,6 @@ export default class Login extends Block<TLoginProps, TLoginChildren> {
         {{{ ButtonSubmitLogin }}}
         {{{ ButtonRegisterLink }}}
       </form>
-    `;
+    `
   }
 }

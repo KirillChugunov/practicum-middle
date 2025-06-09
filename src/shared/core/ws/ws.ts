@@ -2,47 +2,51 @@ import chatStore from '@/store/chatStore/chatStore.ts'
 import userStore from '@/store/userStore/userStore.ts'
 import Store from '@/shared/core/store/store.ts'
 
-export type MessageType = 'message' | 'file' | 'sticker' | 'user connected' | 'pong';
+export type MessageType =
+  | 'message'
+  | 'file'
+  | 'sticker'
+  | 'user connected'
+  | 'pong'
 
 export type TMessageFile = {
-  id: number;
-  user_id: number;
-  path: string;
-  filename: string;
-  content_type: string;
-  content_size: number;
-  upload_date: string;
-};
+  id: number
+  user_id: number
+  path: string
+  filename: string
+  content_type: string
+  content_size: number
+  upload_date: string
+}
 
 export type ChatMessage = {
-  id: string;
-  time: string;
-  user_id: string;
-  content: string;
-  type: Exclude<MessageType, 'pong'>;
-  file?: TMessageFile;
-};
-
+  id: string
+  time: string
+  user_id: string
+  content: string
+  type: Exclude<MessageType, 'pong'>
+  file?: TMessageFile
+}
 
 type IncomingMessage =
   | { type: 'pong' }
   | { type: 'user connected'; content: string }
   | ChatMessage
-  | ChatMessage[];
+  | ChatMessage[]
 
 type OutgoingMessage =
   | { type: 'ping' }
   | { type: 'message'; content: string }
   | { type: 'file'; content: string }
   | { type: 'sticker'; content: string }
-  | { type: 'get old'; content: string };
+  | { type: 'get old'; content: string }
 
 type ChatStoreState = {
-  messages: Array<ChatMessage>;
-  isConnected: boolean;
-  isLoading: boolean;
-  error: string | null;
-};
+  messages: Array<ChatMessage>
+  isConnected: boolean
+  isLoading: boolean
+  error: string | null
+}
 
 function createChatStore(): Store<ChatStoreState> {
   return new Store<ChatStoreState>({

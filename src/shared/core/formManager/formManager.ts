@@ -69,7 +69,8 @@ class FormManager {
     const errorMessages: ErrorMessages = {
       first_name: 'Первая буква должна быть заглавной, без пробелов и цифр.',
       second_name: 'Первая буква должна быть заглавной, без пробелов и цифр.',
-      login: 'От 3 до 20 символов, латиница, без пробелов, допускается дефис и нижнее подчёркивание.',
+      login:
+        'От 3 до 20 символов, латиница, без пробелов, допускается дефис и нижнее подчёркивание.',
       email: 'Некорректный email.',
       password: 'От 8 до 40 символов, минимум одна заглавная буква и цифра.',
       oldPassword: 'От 8 до 40 символов, минимум одна заглавная буква и цифра.',
@@ -111,7 +112,9 @@ class FormManager {
       if (error) hasErrors = true
     }
 
-    const hasEmptyFields = Object.values(this.state.formState).some(v => !v.trim())
+    const hasEmptyFields = Object.values(this.state.formState).some(
+      (v) => !v.trim(),
+    )
 
     const isValid = !hasErrors && !hasEmptyFields
     this.state.isValid = isValid

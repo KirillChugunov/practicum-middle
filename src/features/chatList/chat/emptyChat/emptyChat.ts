@@ -1,19 +1,22 @@
-import { Block, Button, InputField } from '@shared';
-import EventBus from '@/shared/core/eventBus/eventBus.ts';
-import chatStore from '@/store/chatStore/chatStore.ts';
+import { Block, Button, InputField } from '@shared'
+import EventBus from '@/shared/core/eventBus/eventBus.ts'
+import chatStore from '@/store/chatStore/chatStore.ts'
 
 type TEmptyChatProps = {
-  className?: string;
-};
+  className?: string
+}
 
 type TEmptyChatChildren = {
-  TitleInput: InputField;
-  SubmitButton: Button;
-};
+  TitleInput: InputField
+  SubmitButton: Button
+}
 
-export default class EmptyChat extends Block<TEmptyChatProps, TEmptyChatChildren> {
+export default class EmptyChat extends Block<
+  TEmptyChatProps,
+  TEmptyChatChildren
+> {
   constructor() {
-    const eventBus = new EventBus<'submit'>();
+    const eventBus = new EventBus<'submit'>()
 
     const TitleInput = new InputField({
       label: 'Название чата',
@@ -21,30 +24,32 @@ export default class EmptyChat extends Block<TEmptyChatProps, TEmptyChatChildren
       type: 'text',
       eventBus,
       onBlur: () => {},
-    });
+    })
 
     const SubmitButton = new Button({
       label: 'Создать чат',
       type: 'submit',
       variant: 'primary',
       onClick: async (e: Event) => {
-        e.preventDefault();
+        e.preventDefault()
 
-        const wrapper = TitleInput.getContent();
-        const inputEl = wrapper?.querySelector('input') as HTMLInputElement | null;
-        const title = inputEl?.value.trim();
+        const wrapper = TitleInput.getContent()
+        const inputEl = wrapper?.querySelector(
+          'input',
+        ) as HTMLInputElement | null
+        const title = inputEl?.value.trim()
 
         if (title) {
-          await chatStore.createChat(title);
+          await chatStore.createChat(title)
         }
       },
-    });
+    })
 
     super('form', {
       className: 'chat-section__chat-window-empty-form',
       TitleInput,
       SubmitButton,
-    });
+    })
   }
 
   render(): string {
@@ -53,6 +58,6 @@ export default class EmptyChat extends Block<TEmptyChatProps, TEmptyChatChildren
         {{{ TitleInput }}}
         {{{ SubmitButton }}}
       </div>
-    `;
+    `
   }
 }
