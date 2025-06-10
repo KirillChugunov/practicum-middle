@@ -10,7 +10,7 @@ userStore.loadUser().finally(() => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-  errorToast.renderToRoot('app') // или другой root id
+  errorToast.renderToRoot('app')
 })
 
 document.addEventListener('click', (event) => {

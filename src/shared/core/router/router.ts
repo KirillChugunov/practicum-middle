@@ -58,7 +58,9 @@ export class Router {
     const isAllowed = guard ? guard() : true
 
     if (isProtected && !isAllowed) {
-      this.go('/login')
+      if (pathname !== '/login') {
+        this.go('/login')
+      }
       return
     }
 
@@ -76,6 +78,7 @@ export class Router {
   }
 
   go(pathname: string): void {
+    if (window.location.pathname === pathname) return // 🛑 избегаем зацикливания
     this.history.pushState({}, '', pathname)
     this._onRoute(pathname)
   }

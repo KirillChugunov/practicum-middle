@@ -45,9 +45,11 @@ export class Route {
     return isEqual(pathname, this._pathname)
   }
 
-  render(routerInstance: RouterInstance, _pathname: string): void {
+  render(routerInstance: RouterInstance, pathname: string): void {
     if (this._guard && !this._guard()) {
-      routerInstance.go('/login')
+      if (pathname !== '/login') {
+        routerInstance.go('/login')
+      }
       return
     }
 
