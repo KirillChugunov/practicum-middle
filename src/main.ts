@@ -6,6 +6,7 @@ import { initRouter } from '@/shared/core/router/utils/initRouter.ts'
 import { errorToast } from '@/shared/ui/errorToast/errorToast.ts'
 
 userStore.loadUser().finally(() => {
+  console.log("init")
   initRouter()
 })
 

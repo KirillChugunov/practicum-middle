@@ -1,16 +1,13 @@
-import { Route } from './route'
+import { Route } from '@/shared/core/router/route.ts'
 import { Block } from '@shared'
+import userStore from '@/store/userStore/userStore.ts'
 
 type BlockConstructor = new () => Block
 
-interface RouteOptions {
-  guard?: () => boolean
-}
-
-export class Router {
+class Router {
   private static __instance: Router
-  private history: History = window.history
   private routes: Route[] = []
+  private history: History = window.history
   private _currentRoute: Route | null = null
   private _rootQuery!: string
 
@@ -19,49 +16,47 @@ export class Router {
       return Router.__instance
     }
 
-    this._rootQuery = rootQuery
     this.routes = []
     this.history = window.history
     this._currentRoute = null
+    this._rootQuery = rootQuery
 
     Router.__instance = this
   }
 
-  use(pathname: string, block: BlockConstructor, options: RouteOptions = {}): this {
-    const route = new Route(pathname, block, {
-      rootQuery: this._rootQuery,
-      guard: options.guard,
-    })
-
+  use(pathname: string, block: BlockConstructor, isProtected: boolean): this {
+    const route = new Route(pathname, block, { rootQuery: this._rootQuery, isProtected: isProtected})
     this.routes.push(route)
     return this
   }
 
   start(): void {
-    window.onpopstate = () => {
-      this._onRoute(window.location.pathname)
-    }
+    window.onpopstate = ((event: PopStateEvent) => {
+      const target = event.currentTarget as Window
+      this._onRoute(target.location.pathname)
+    }).bind(this)
 
     this._onRoute(window.location.pathname)
   }
 
   private _onRoute(pathname: string): void {
-    let route = this.getRoute(pathname)
+    const route = this.getRoute(pathname)
+    if (!route) return
 
-    if (!route) {
-      const fallback = this.getRoute('/404')
-      if (fallback && pathname !== '/404') {
-        this.go('/404')
+    const isAuth = userStore.getState().isAuth
+    const isProtected = (route as any)._props?.isProtected
+
+
+    if (isProtected && !isAuth) {
+      if (pathname !== '/') {
+        this.go('/')
       }
       return
     }
 
-    const guard = route.getGuard?.()
-    const isAllowed = guard ? guard() : true
-
-    if (guard && !isAllowed) {
-      if (pathname !== '/' && window.location.pathname !== '/') {
-        this.go('/')
+    if (!isProtected && isAuth) {
+      if (pathname !== '/messenger') {
+        this.go('/messenger')
       }
       return
     }
@@ -71,11 +66,13 @@ export class Router {
     }
 
     this._currentRoute = route
-    route.render(this, pathname)
+    route.render()
   }
 
   go(pathname: string): void {
-    if (this._currentRoute?.match(pathname)) return
+    if (this._currentRoute?.match(pathname)) {
+      return
+    }
     this.history.pushState({}, '', pathname)
     this._onRoute(pathname)
   }
@@ -89,7 +86,8 @@ export class Router {
   }
 
   getRoute(pathname: string): Route | undefined {
-    return this.routes.find((route) => route.match(pathname))
+    const found = this.routes.find(route => route.match(pathname))
+    return found
   }
 }
 

@@ -6,11 +6,7 @@ type BlockConstructor = new () => Block
 
 interface RouteProps {
   rootQuery: string
-  guard?: () => boolean
-}
-
-interface RouterInstance {
-  go: (pathname: string) => void
+  isProtected: boolean
 }
 
 export class Route {
@@ -18,20 +14,18 @@ export class Route {
   private _blockClass: BlockConstructor
   private _block: Block | null
   private _props: RouteProps
-  private _guard?: () => boolean
 
   constructor(pathname: string, view: BlockConstructor, props: RouteProps) {
     this._pathname = pathname
     this._blockClass = view
     this._block = null
     this._props = props
-    this._guard = props.guard
   }
 
-  navigate(pathname: string, routerInstance: RouterInstance): void {
+  navigate(pathname: string): void {
     if (this.match(pathname)) {
       this._pathname = pathname
-      this.render(routerInstance, pathname)
+      this.render()
     }
   }
 
@@ -45,24 +39,17 @@ export class Route {
     return isEqual(pathname, this._pathname)
   }
 
-  render(routerInstance: RouterInstance, pathname: string): void {
-    if (this._guard && !this._guard()) {
-      if (pathname !== '/') {
-        routerInstance.go('/')
-      }
-      return
-    }
+  render(): void {
+    console.log('[Route] rendering', this._pathname)
 
     if (!this._block) {
+      console.log('[Route] creating block')
       this._block = new this._blockClass()
       render(this._props.rootQuery, this._block)
       return
     }
 
+    console.log('[Route] showing block')
     this._block.show()
-  }
-
-  getGuard(): (() => boolean) | undefined {
-    return this._guard
   }
 }

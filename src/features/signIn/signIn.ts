@@ -1,8 +1,7 @@
 import { Block, Button, FormManager, InputField } from '@shared'
 import EventBus from '@/shared/core/eventBus/eventBus.ts'
-import httpTransport from '@/shared/core/api/HTTPTransport.ts'
 import router from '@/shared/core/router/router.ts'
-import { apiConfig } from '@/shared/constants/api.ts'
+import userStore from '@/store/userStore/userStore.ts'
 
 type TSignInProps = Record<string, never>
 type TSignInChildren = {
@@ -114,17 +113,7 @@ export default class SignIn extends Block<TSignInProps, TSignInChildren> {
   private async handleRegistration(
     formState: Record<string, string>,
   ): Promise<void> {
-    try {
-      const res = await httpTransport.post(apiConfig.auth, { data: formState })
-
-      if (res.status === 200 || res.status === 201) {
-        router.go('/messenger')
-      } else {
-        console.error('Регистрация не удалась:', res.status, res.responseText)
-      }
-    } catch (error) {
-      console.error('Ошибка при регистрации:', error)
-    }
+    userStore.handleRegistration(formState)
   }
 
   override render(): string {

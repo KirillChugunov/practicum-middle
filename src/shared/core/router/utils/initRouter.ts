@@ -1,9 +1,7 @@
 import * as Pages from '@/pages'
 import router from '@/shared/core/router/router.ts'
-import userStore from '@/store/userStore/userStore.ts'
-
 const publicRoutes = ['/', '/sign-up']
-const isAuthenticated = () => userStore.getState().isAuth
+
 
 export const initRouter = () => {
   const pages = {
@@ -19,10 +17,12 @@ export const initRouter = () => {
 
   for (const [path, Component] of Object.entries(pages)) {
     const isPublic = publicRoutes.includes(path)
-    router.use(path, Component, {
-      guard: isPublic ? undefined : isAuthenticated,
-    })
+    router.use(path, Component, !isPublic)
   }
 
-  router.start()
+  const originalGetRoute = router.getRoute.bind(router)
+  router.getRoute = (pathname: string) => {
+    return originalGetRoute(pathname) || router.getRoute('/404')
+  }
+   router.start()
 }

@@ -49,7 +49,21 @@ class UserStore extends Store<TUser> {
   constructor() {
     super(defaultUser)
   }
+  async handleRegistration(
+    formState: Record<string, string>,
+  ): Promise<void> {
+    try {
+      const res = await httpTransport.post(apiConfig.auth, { data: formState })
 
+      if (res.status === 200 || res.status === 201) {
+        this.setState({ ...this.getState(), isAuth: true })
+      } else {
+        console.error('Регистрация не удалась:', res.status, res.responseText)
+      }
+    } catch (error) {
+      console.error('Ошибка при регистрации:', error)
+    }
+  }
   public async login(formState: LoginPayload): Promise<void> {
     try {
       const res = await httpTransport.post(apiConfig.signIn, {
@@ -59,7 +73,7 @@ class UserStore extends Store<TUser> {
       if (res.status === 200 || res.status === 201) {
         await this.loadUser()
         this.setState({ ...this.getState(), isAuth: true })
-        router.go('/messenger')
+        router.go("/messenger")
       } else {
         errorToast.showToast(`Авторизация не удалась: ${res.status}`)
       }

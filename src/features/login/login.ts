@@ -49,7 +49,6 @@ export default class Login extends Block<TLoginProps, TLoginChildren> {
         await formManager.formSubmit(e, async () => {
           const { formState } = formManager.getState()
           await userStore.login(formState)
-          router.go('/messenger')
         })
       },
     })
