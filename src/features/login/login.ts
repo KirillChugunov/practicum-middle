@@ -60,7 +60,7 @@ export default class Login extends Block<TLoginProps, TLoginChildren> {
       type: 'link',
       onClick: (e: Event) => {
         e.preventDefault()
-        router.go('/singin')
+        router.go('/signin')
       },
     })
 

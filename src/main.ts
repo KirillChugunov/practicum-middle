@@ -3,9 +3,14 @@ import { Modal } from '@shared'
 import modalService from '@/shared/core/modalService/modalService.ts'
 import router from '@/shared/core/router/router.ts'
 import { initRouter } from '@/shared/core/router/utils/initRouter.ts'
+import { errorToast } from '@/shared/ui/errorToast/errorToast.ts'
 
 userStore.loadUser().finally(() => {
   initRouter()
+})
+
+document.addEventListener('DOMContentLoaded', () => {
+  errorToast.renderToRoot('app') // или другой root id
 })
 
 document.addEventListener('click', (event) => {

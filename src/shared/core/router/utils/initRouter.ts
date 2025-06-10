@@ -2,7 +2,7 @@ import * as Pages from '@/pages'
 import router from '@/shared/core/router/router.ts'
 import userStore from '@/store/userStore/userStore.ts'
 
-const publicRoutes = ['/', '/login', '/signin']
+const publicRoutes = ['/login', '/signin']
 
 const isAuthenticated = () => userStore.getState().isAuth
 
@@ -37,7 +37,7 @@ export const initRouter = () => {
   if (isAuth && publicRoutes.includes(initialPath)) {
     router.go('/chatlist')
   } else if (!isAuth && !publicRoutes.includes(initialPath)) {
-    router.go('/')
+    router.go('/login')
   } else {
     router.start()
   }

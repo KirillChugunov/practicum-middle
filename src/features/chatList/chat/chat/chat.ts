@@ -9,6 +9,7 @@ import {
 import { ChatMessage, ChatWebSocket } from '@/shared/core/ws/ws.ts'
 import userStore from '@/store/userStore/userStore.ts'
 import chatStore from '@/store/chatStore/chatStore.ts'
+import { errorToast } from '@/shared/ui/errorToast/errorToast.ts'
 
 type ChatProps = {
   chatId: string | null
@@ -42,6 +43,7 @@ export default class Chat extends Block<ChatProps, ChatChildren> {
       buttonIcon: './src/assets/icons/clip.svg',
       alt: 'Attachment icon',
       onClick: (e: Event) => {
+        errorToast.showToast('Что-то пошло не так 😢')
         e.preventDefault()
         this.toggleDropDown()
       },

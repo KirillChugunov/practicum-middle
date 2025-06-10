@@ -2,6 +2,7 @@ import Store from '@/shared/core/store/store.ts'
 import httpTransport from '@/shared/core/api/HTTPTransport'
 import { apiConfig } from '@/shared/constants/api'
 import defaultChatAvatar from '@/assets/icons/chatListAvatar.svg'
+import { errorToast } from '@/shared/ui/errorToast/errorToast.ts'
 
 export type TChatUser = {
   id: number
@@ -57,11 +58,7 @@ class ChatStore extends Store<TChatStore> {
     this.setState({ ...this.getState(), error })
   }
 
-  async fetchChats(
-    offset?: number,
-    limit?: number,
-    title?: string,
-  ): Promise<void> {
+  async fetchChats(offset?: number, limit?: number, title?: string): Promise<void> {
     this.setLoading(true)
     this.setError(null)
 
@@ -71,12 +68,10 @@ class ChatStore extends Store<TChatStore> {
       if (limit !== undefined) params.append('limit', String(limit))
       if (title) params.append('title', title)
 
-      const res = await httpTransport.get(
-        `${apiConfig.getChats}?${params.toString()}`,
-      )
+      const res = await httpTransport.get(`${apiConfig.getChats}?${params.toString()}`)
       const chats = JSON.parse(res.responseText) as TChat[]
 
-      const normalizedChats = chats.map((chat) => ({
+      const normalizedChats = chats.map(chat => ({
         ...chat,
         avatar: chat.avatar
           ? `https://ya-praktikum.tech/api/v2/resources${chat.avatar}`
@@ -85,7 +80,9 @@ class ChatStore extends Store<TChatStore> {
 
       this.setState({ ...this.getState(), chats: normalizedChats })
     } catch (e: any) {
-      this.setError(e?.message ?? 'Ошибка загрузки чатов')
+      const msg = e?.message ?? 'Ошибка загрузки чатов'
+      this.setError(msg)
+      errorToast.showToast(msg)
     } finally {
       this.setLoading(false)
     }
@@ -96,7 +93,7 @@ class ChatStore extends Store<TChatStore> {
       const res = await httpTransport.get(apiConfig.getChatUsers(chatId))
       const users = JSON.parse(res.responseText) as TChatUser[]
 
-      const normalizedUsers = users.map((user) => ({
+      const normalizedUsers = users.map(user => ({
         ...user,
         avatar: user.avatar
           ? `https://ya-praktikum.tech/api/v2/resources${user.avatar}`
@@ -114,7 +111,7 @@ class ChatStore extends Store<TChatStore> {
 
       return normalizedUsers
     } catch (e) {
-      console.error('Ошибка при загрузке пользователей чата:', e)
+      errorToast.showToast('Ошибка при загрузке пользователей чата')
       return []
     }
   }
@@ -124,7 +121,7 @@ class ChatStore extends Store<TChatStore> {
       await httpTransport.put(apiConfig.updateChatAvatar, { data: formData })
       await this.fetchChats()
     } catch (e) {
-      console.error('Ошибка при обновлении аватара чата:', e)
+      errorToast.showToast('Ошибка при обновлении аватара чата')
     }
   }
 
@@ -134,10 +131,11 @@ class ChatStore extends Store<TChatStore> {
       const { token } = JSON.parse(res.responseText)
       return token
     } catch (e) {
-      console.error('Ошибка при получении токена:', e)
+      errorToast.showToast('Ошибка при получении токена')
       return null
     }
   }
+
   async createChat(title: string): Promise<number | null> {
     this.setLoading(true)
     this.setError(null)
@@ -148,13 +146,12 @@ class ChatStore extends Store<TChatStore> {
       })
 
       const { id } = JSON.parse(res.responseText)
-
       await this.fetchChats()
-
       return id
     } catch (e: any) {
-      this.setError(e?.message ?? 'Ошибка создания чата')
-      console.error('Ошибка при создании чата:', e)
+      const msg = e?.message ?? 'Ошибка создания чата'
+      this.setError(msg)
+      errorToast.showToast(msg)
       return null
     } finally {
       this.setLoading(false)
@@ -170,11 +167,11 @@ class ChatStore extends Store<TChatStore> {
         data: { login },
       })
 
-      const users = JSON.parse(res.responseText)
-      return users
+      return JSON.parse(res.responseText)
     } catch (e: any) {
-      this.setError(e?.message ?? 'Ошибка поиска пользователя')
-      console.error('Ошибка при поиске пользователя:', e)
+      const msg = e?.message ?? 'Ошибка поиска пользователя'
+      this.setError(msg)
+      errorToast.showToast(msg)
       return null
     } finally {
       this.setLoading(false)
@@ -200,13 +197,13 @@ class ChatStore extends Store<TChatStore> {
 
       return JSON.parse(res.responseText)
     } catch (e) {
-      console.error('Ошибка при загрузке файла:', e)
+      errorToast.showToast('Ошибка при загрузке файла')
       return null
     }
   }
 
   updateUnreadCount(chatId: number) {
-    const updatedChats = this.getState().chats.map((chat) =>
+    const updatedChats = this.getState().chats.map(chat =>
       chat.id === chatId ? { ...chat, unread_count: 0 } : chat,
     )
     this.setState({ ...this.getState(), chats: updatedChats })
@@ -221,14 +218,15 @@ class ChatStore extends Store<TChatStore> {
       this.updateUnreadCount(chatId)
       return unread_count
     } catch (e) {
-      console.error('Ошибка при получении количества новых сообщений:', e)
+      errorToast.showToast('Ошибка при получении количества новых сообщений')
       return null
     }
   }
+
   async addUsersToChat(users: number[]): Promise<void> {
     const chatId = this.getState().selectedChatId
     if (!chatId) {
-      console.error('Чат не выбран')
+      errorToast.showToast('Чат не выбран')
       return
     }
 
@@ -236,26 +234,26 @@ class ChatStore extends Store<TChatStore> {
       await httpTransport.put(apiConfig.addUsersToChat, {
         data: { users, chatId },
       })
-
       await this.fetchChatUsers(String(chatId))
     } catch (e) {
-      console.error('Ошибка при добавлении пользователей:', e)
+      errorToast.showToast('Ошибка при добавлении пользователей')
     }
   }
 
   async removeUsersFromChat(users: number[]) {
     const chatId = this.getState().selectedChatId
     if (!chatId) {
-      console.error('Чат не выбран')
+      errorToast.showToast('Чат не выбран')
       return
     }
+
     try {
       await httpTransport.delete(apiConfig.removeUsersFromChat, {
         data: { users, chatId },
       })
       await this.fetchChatUsers(String(chatId))
     } catch (e) {
-      console.error('Ошибка при удалении пользователей:', e)
+      errorToast.showToast('Ошибка при удалении пользователей')
     }
   }
 }

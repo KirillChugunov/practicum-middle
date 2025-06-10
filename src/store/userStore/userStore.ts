@@ -3,6 +3,7 @@ import { apiConfig } from '@/shared/constants/api'
 import Store from '@/shared/core/store/store.ts'
 import router from '@/shared/core/router/router.ts'
 import defaultAvatar from '@/assets/icons/picture.svg'
+import { errorToast } from '@/shared/ui/errorToast/errorToast.ts'
 
 export type TUser = {
   avatar: string
@@ -60,10 +61,10 @@ class UserStore extends Store<TUser> {
         this.setState({ ...this.getState(), isAuth: true })
         router.go('/chatlist')
       } else {
-        console.error('Авторизация не удалась:', res.status, res.responseText)
+        errorToast.showToast(`Авторизация не удалась: ${res.status}`)
       }
     } catch (error) {
-      console.error('Ошибка при авторизации:', error)
+      errorToast.showToast(`Ошибка при авторизации: ${error}`)
     }
   }
 
@@ -72,12 +73,12 @@ class UserStore extends Store<TUser> {
       const res = await httpTransport.post(apiConfig.logout)
       if (res.status === 200 || res.status === 201) {
         this.resetUser()
-        router.go('/')
+        router.go('/login')
       } else {
-        console.error('Выход не удался:', res.status, res.responseText)
+        errorToast.showToast(`Выход не удался: ${res.status}`)
       }
     } catch (error) {
-      console.error('Ошибка при выходе:', error)
+      errorToast.showToast(`Ошибка при выходе: ${error}`)
     }
   }
 
@@ -94,10 +95,10 @@ class UserStore extends Store<TUser> {
           isAuth: true,
         })
       } else {
-        console.error('Ошибка загрузки пользователя:', res.status)
+        errorToast.showToast(`Ошибка загрузки пользователя: ${res.status}`)
       }
     } catch (error) {
-      console.error('Ошибка при получении пользователя:', error)
+      errorToast.showToast(`Ошибка при получении пользователя: ${error}`)
     }
   }
 
@@ -124,16 +125,12 @@ class UserStore extends Store<TUser> {
             : defaultAvatar,
           isAuth: true,
         })
-        console.log('Профиль успешно обновлён')
+        errorToast.showToast('Профиль успешно обновлён')
       } else {
-        console.error(
-          'Ошибка при обновлении профиля:',
-          res.status,
-          res.responseText,
-        )
+        errorToast.showToast(`Ошибка при обновлении профиля: ${res.status}`)
       }
     } catch (error) {
-      console.error('Ошибка при изменении профиля:', error)
+      errorToast.showToast(`Ошибка при изменении профиля: ${error}`)
     }
   }
 
@@ -150,16 +147,12 @@ class UserStore extends Store<TUser> {
       })
 
       if (res.status === 200) {
-        console.log('Пароль успешно обновлён', res.responseText)
+        errorToast.showToast('Пароль успешно обновлён')
       } else {
-        console.error(
-          'Ошибка при обновлении пароля:',
-          res.status,
-          res.responseText,
-        )
+        errorToast.showToast(`Ошибка при обновлении пароля: ${res.status}`)
       }
     } catch (error) {
-      console.error('Ошибка при изменении пароля:', error)
+      errorToast.showToast(`Ошибка при изменении пароля: ${error}`)
     }
   }
 
@@ -181,16 +174,12 @@ class UserStore extends Store<TUser> {
             : defaultAvatar,
           isAuth: true,
         })
-        console.log('Аватар успешно обновлён')
+        errorToast.showToast('Аватар успешно обновлён')
       } else {
-        console.error(
-          'Ошибка при обновлении аватара:',
-          res.status,
-          res.responseText,
-        )
+        errorToast.showToast(`Ошибка при обновлении аватара: ${res.status}`)
       }
     } catch (error) {
-      console.error('Ошибка при загрузке аватара:', error)
+      errorToast.showToast(`Ошибка при загрузке аватара: ${error}`)
     }
   }
 }
