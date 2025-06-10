@@ -55,15 +55,21 @@ export class Router {
     const publicPaths = ['/login', '/sign-up']
 
     if (pathname === '/') {
-      this.go(isAuth ? '/messenger' : '/login')
+      const target = isAuth ? '/messenger' : '/login'
+      if (window.location.pathname !== target) {
+        this.go(target)
+      }
       return
     }
 
     let route = this.getRoute(pathname)
 
     if (!route) {
-      route = this.getRoute('/404')
-      if (!route) return
+      const fallback = this.getRoute('/404')
+      if (fallback && window.location.pathname !== '/404') {
+        this.go('/404')
+      }
+      return
     }
 
     const guard = route.getGuard?.()
@@ -71,14 +77,16 @@ export class Router {
     const isAllowed = guard ? guard() : true
 
     if (isProtected && !isAllowed) {
-      if (pathname !== '/login') {
+      if (pathname !== '/login' && window.location.pathname !== '/login') {
         this.go('/login')
       }
       return
     }
 
-    if (!isProtected && isAllowed && publicPaths.includes(pathname) && pathname !== '/messenger') {
-      this.go('/messenger')
+    if (!isProtected && isAllowed && publicPaths.includes(pathname)) {
+      if (pathname !== '/messenger' && window.location.pathname !== '/messenger') {
+        this.go('/messenger')
+      }
       return
     }
 
