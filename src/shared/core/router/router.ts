@@ -53,6 +53,20 @@ export class Router {
     const route = this.getRoute(pathname)
     if (!route) return
 
+    const guard = route.getGuard?.()
+    const isProtected = !!guard
+    const isAllowed = guard ? guard() : true
+
+    if (isProtected && !isAllowed) {
+      this.go('/login')
+      return
+    }
+
+    if (!isProtected && isAllowed && pathname !== '/messenger') {
+      this.go('/messenger')
+      return
+    }
+
     if (this._currentRoute && this._currentRoute !== route) {
       this._currentRoute.leave()
     }

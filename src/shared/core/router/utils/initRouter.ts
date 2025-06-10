@@ -26,8 +26,13 @@ export const initRouter = () => {
   }
 
   const originalGetRoute = router.getRoute.bind(router)
+
   router.getRoute = (pathname: string) => {
-    return originalGetRoute(pathname) || router.getRoute('/404')
+    if (pathname === '/') {
+      return undefined
+    }
+
+    return originalGetRoute(pathname) || originalGetRoute('/404')
   }
 
   const initialPath = window.location.pathname

@@ -19,7 +19,7 @@ export default class ErrorCircle extends Block<
       variant: 'link',
       label: 'Назад к чатам',
       type: 'link',
-      onClick: () => router.go("/sign-up"),
+      onClick: () => router.go("/messenger"),
     })
 
     super('div', {

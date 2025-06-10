@@ -47,7 +47,7 @@ export class Route {
 
   render(routerInstance: RouterInstance, _pathname: string): void {
     if (this._guard && !this._guard()) {
-      routerInstance.go('/')
+      routerInstance.go('/login')
       return
     }
 
@@ -58,5 +58,9 @@ export class Route {
     }
 
     this._block.show()
+  }
+
+  getGuard(): (() => boolean) | undefined {
+    return this._guard
   }
 }
