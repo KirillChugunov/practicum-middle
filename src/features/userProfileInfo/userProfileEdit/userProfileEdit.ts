@@ -1,4 +1,3 @@
-import profilePicture from '../../../assets/icons/picture.svg'
 import { Block } from '@shared'
 import {
   UserProfileEditForm,
@@ -6,20 +5,30 @@ import {
   UserProfileTitles,
 } from '@/features'
 
-export default class UserProfileEdit extends Block {
+type TUserProfileEditProps = Record<string, never>
+
+type TUserProfileEditChildren = {
+  GoBackButton: UserProfileEditGoBack
+  ProfileTitles: UserProfileTitles
+  UserProfileEditForm: UserProfileEditForm
+}
+
+export default class UserProfileEdit extends Block<
+  TUserProfileEditProps,
+  TUserProfileEditChildren
+> {
   constructor() {
     super('div', {
       className: 'user-profile__container',
       GoBackButton: new UserProfileEditGoBack(),
       ProfileTitles: new UserProfileTitles({
         name: 'userName',
-        profilePicture: profilePicture,
       }),
       UserProfileEditForm: new UserProfileEditForm(),
     })
   }
 
-  render() {
+  override render(): string {
     return `
       {{{ GoBackButton }}}
       <section class="user-profile__edit">

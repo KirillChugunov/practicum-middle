@@ -11,7 +11,7 @@ type RequestOptions = {
   timeout?: number
   headers?: Record<string, string>
   method?: Method
-  data?: Record<string, string> | FormData
+  data?: Record<string, unknown> | FormData
 }
 
 function queryStringify(data: Record<string, string>): string {
@@ -57,6 +57,7 @@ class HTTPTransport {
       }
 
       const xhr = new XMLHttpRequest()
+      xhr.withCredentials = true
       const isGet = method === METHODS.GET
 
       xhr.open(
@@ -89,4 +90,5 @@ class HTTPTransport {
   }
 }
 
-export default HTTPTransport
+const httpTransport = new HTTPTransport()
+export default httpTransport

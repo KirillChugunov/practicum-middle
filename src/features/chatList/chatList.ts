@@ -1,18 +1,31 @@
 import { Block } from '@shared'
 import { Chat, ContactList } from '@/features'
 
-export default class ChatList extends Block {
+type TChatListProps = Record<string, never>
+
+type TChatListChildren = {
+  ContactList: ContactList
+  Chat: Chat
+}
+
+export default class ChatList extends Block<TChatListProps, TChatListChildren> {
   constructor() {
+    const chat = new Chat({ chatId: null })
+
+    const contactList = new ContactList({
+      onChatSelect: (id: number) => {
+        chat.setProps({ chatId: String(id) })
+      },
+    })
+
     super('div', {
       className: 'chat-list',
-      ContactList: new ContactList(),
-      Chat: new Chat({
-        chat: true,
-      }),
+      ContactList: contactList,
+      Chat: chat,
     })
   }
 
-  public render(): string {
+  override render(): string {
     return `
       {{{ ContactList }}}
       {{{ Chat }}}

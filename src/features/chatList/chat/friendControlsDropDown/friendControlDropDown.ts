@@ -1,35 +1,87 @@
 import { Block, IconButton } from '@shared'
-import deleteIcon from '../../../../assets/icons/deletIcon.svg'
-import plusIcon from '../../../../assets/icons/plusIcon.svg'
+import deleteIcon from '@/assets/icons/deletIcon.svg'
+import plusIcon from '@/assets/icons/plusIcon.svg'
+import modalService from '@/shared/core/modalService/modalService.ts'
+import AddUserModalContent from '@/features/chatList/chat/chatModalConent/ModalConent.ts'
 
-export default class FriendControlDropDown extends Block {
-  constructor() {
+type TFriendControlDropDownProps = {
+  isOpen: boolean
+  chatId: string | null
+  onAddClick?: () => void
+  onDeleteClick?: () => void
+}
+
+type TFriendControlDropDownChildren = {
+  AddUserButton: IconButton
+  DeleteUserButton: IconButton
+}
+
+export default class FriendControlDropDown extends Block<
+  TFriendControlDropDownProps,
+  TFriendControlDropDownChildren
+> {
+  constructor(props: TFriendControlDropDownProps) {
+    const AddUserButton = new IconButton({
+      onClick: (e: Event) => {
+        e.preventDefault()
+        props.onAddClick?.()
+        modalService.open(AddUserModalContent, {
+          chatId: props.chatId ?? '',
+          isAdd: true,
+          onDone: () => modalService.close(),
+        })
+      },
+      buttonIcon: plusIcon,
+      alt: 'Иконка добавления',
+    })
+
+    const DeleteUserButton = new IconButton({
+      onClick: (e: Event) => {
+        e.preventDefault()
+        props.onDeleteClick?.()
+        modalService.open(AddUserModalContent, {
+          chatId: props.chatId ?? '',
+          isAdd: false,
+          onDone: () => modalService.close(),
+        })
+      },
+      buttonIcon: deleteIcon,
+      alt: 'Иконка удаления',
+    })
+
     super('div', {
-      className: 'chat-section__title-wrapper',
-      AddUserButton: new IconButton({
-        onClick: () => console.log('test'),
-        buttonIcon: plusIcon,
-        alt: 'Иконка добавления',
-      }),
-      DeleteUserButton: new IconButton({
-        onClick: () => console.log('test'),
-        buttonIcon: deleteIcon,
-        alt: 'Иконка удаления',
-      }),
+      ...props,
+      className: 'friend-controls',
+      AddUserButton,
+      DeleteUserButton,
     })
   }
 
-  public render(): string {
+  override componentDidMount(): void {
+    this.updateVisibility(this.props.isOpen)
+  }
+
+  override componentDidUpdate(
+    _oldProps: TFriendControlDropDownProps,
+    newProps: TFriendControlDropDownProps,
+  ): boolean {
+    this.updateVisibility(newProps.isOpen)
+    return true
+  }
+
+  private updateVisibility(isOpen: boolean): void {
+    isOpen ? this.show() : this.hide()
+  }
+
+  override render(): string {
     return `
-      <div class="friend-controls">
-        <div class="friend-controls__option">
-          {{{ AddUserButton }}} 
-          <p>Добавить пользователя</p>
-        </div>
-        <div class="friend-controls__option">
-          {{{ DeleteUserButton }}} 
-          <p>Удалить пользователя</p>
-        </div>
+      <div class="friend-controls__option">
+        {{{ AddUserButton }}}
+        <p>Добавить пользователя</p>
+      </div>
+      <div class="friend-controls__option">
+        {{{ DeleteUserButton }}}
+        <p>Удалить пользователя</p>
       </div>
     `
   }

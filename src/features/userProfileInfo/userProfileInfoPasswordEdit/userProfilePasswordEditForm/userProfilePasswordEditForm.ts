@@ -1,7 +1,6 @@
-import profilePicture from '../../../../assets/icons/picture.svg'
 import { Block, Button, FormManager, InputField } from '@shared'
-import { UserProfileEditGoBack, UserProfileTitles } from '@/features'
 import EventBus from '@/shared/core/eventBus/eventBus.ts'
+import userStore from '@/store/userStore/userStore.ts'
 
 export default class UserProfilePasswordEdit extends Block {
   private eventBusInstance: EventBus<'submit'>
@@ -12,18 +11,12 @@ export default class UserProfilePasswordEdit extends Block {
 
     super('form', {
       className: 'user-profile-password-edit__grid',
-      GoBackButton: new UserProfileEditGoBack(),
-      ProfileTitles: new UserProfileTitles({
-        name: 'userName',
-        profilePicture: profilePicture,
-      }),
       OldPassword: new InputField({
         label: 'Старый пароль',
         type: 'password',
         onBlur: (e: Event) => {
-          if (this.children.OldPassword instanceof InputField) {
+          if (this.children.OldPassword instanceof Block)
             formManager.validateField(e, this.children.OldPassword)
-          }
         },
         name: 'oldPassword',
         eventBus,
@@ -31,12 +24,11 @@ export default class UserProfilePasswordEdit extends Block {
         placeHolder: 'Старый пароль',
       }),
       NewPassword: new InputField({
-        label: 'Пароль',
-        type: 'newPassword',
+        label: 'Новый пароль',
+        type: 'password',
         onBlur: (e: Event) => {
-          if (this.children.NewPassword instanceof InputField) {
+          if (this.children.NewPassword instanceof Block)
             formManager.validateField(e, this.children.NewPassword)
-          }
         },
         name: 'newPassword',
         eventBus,
@@ -50,7 +42,18 @@ export default class UserProfilePasswordEdit extends Block {
         onClick: (e: Event) => {
           e.preventDefault()
           this.eventBusInstance.emit('submit')
-          formManager.formSubmit(e)
+
+          formManager.formSubmit(e, async () => {
+            const formData = formManager.getState().formState
+            if (formData.oldPassword && formData.newPassword) {
+              userStore.updatePassword({
+                oldPassword: formData.oldPassword,
+                newPassword: formData.newPassword,
+              })
+            } else {
+              console.warn('Не заполнены оба поля пароля')
+            }
+          })
         },
       }),
     })
@@ -58,7 +61,7 @@ export default class UserProfilePasswordEdit extends Block {
     this.eventBusInstance = eventBus
   }
 
-  render() {
+  override render(): string {
     return `
       {{{ OldPassword }}}
       {{{ NewPassword }}}

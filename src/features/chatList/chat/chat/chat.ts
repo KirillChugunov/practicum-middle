@@ -1,71 +1,150 @@
-import { messageListMock } from './mock.ts'
-import ChatAvatar from '../../../../assets/icons/chatListAvatar.svg'
 import { Block, IconButton } from '@shared'
-import { AddFileDropDown, ChatTitle, EmptyChat, Message } from '@/features'
-import { ChatForm } from '@/features'
-type TChat = {
+import {
+  ChatTitle,
+  EmptyChat,
+  Message,
+  ChatForm,
+  AddFileDropDown,
+} from '@/features'
+import { ChatMessage, ChatWebSocket } from '@/shared/core/ws/ws.ts'
+import userStore from '@/store/userStore/userStore.ts'
+import chatStore from '@/store/chatStore/chatStore.ts'
+import { errorToast } from '@/shared/ui/errorToast/errorToast.ts'
+
+type ChatProps = {
+  chatId: string | null
   chat: boolean
 }
-export default class Chat extends Block {
-  constructor(props: TChat) {
+
+type ChatChildren = {
+  ChatTitle: ChatTitle
+  EmptyChat: EmptyChat
+  ChatForm: ChatForm
+  AddFileDropDown: AddFileDropDown
+  AddButton: IconButton
+  Messages?: Block[]
+}
+
+export default class Chat extends Block<ChatProps, ChatChildren> {
+  private chatWS?: ChatWebSocket
+  private unsubscribe?: () => void
+  private isFileDropDownOpen = false
+
+  constructor(props: { chatId: string | null }) {
+    const chatId = props.chatId
+    const isActive = Boolean(chatId)
+
+    const addFileDropDown = new AddFileDropDown({
+      isOpen: false,
+      chatWS: undefined,
+    })
+
+    const addButton = new IconButton({
+      buttonIcon: './src/assets/icons/clip.svg',
+      alt: 'Attachment icon',
+      onClick: (e: Event) => {
+        errorToast.showToast('Что-то пошло не так 😢')
+        e.preventDefault()
+        this.toggleDropDown()
+      },
+    })
+
     super('section', {
-      ...props,
+      chatId,
+      chat: isActive,
       className: 'chat-section',
-      chat: props.chat,
+      ChatTitle: new ChatTitle({ chatId }),
+      ChatForm: new ChatForm({ chatWS: undefined }),
       EmptyChat: new EmptyChat(),
-      ChatTitle: new ChatTitle({
-        partnerName: 'MiddleFront',
-        PartnerAvatar: ChatAvatar,
-      }),
-      Messages: messageListMock.map((message) => {
-        if (message.type === 'text') {
-          return new Message({
-            type: message.type,
-            owner: message.owner,
-            text: message.text,
-            timeStamp: message.timeStamp,
-          })
-        } else if (message.type === 'photo') {
-          return new Message({
-            type: message.type,
-            owner: message.owner,
-            photo: message.photo,
-            timeStamp: message.timeStamp,
-          })
-        }
-        return null
-      }),
-      AddFileDropDown: new AddFileDropDown(),
-      AddButton: new IconButton({
-        buttonIcon: './src/assets/icons/clip.svg',
-        alt: 'Location icon',
-        onClick: () => console.log('test'),
-      }),
-      SentButton: new IconButton({
-        buttonIcon: './src/assets/icons/arrow.svg',
-        alt: 'Location icon',
-        direction: 'right',
-        onClick: () => console.log('test'),
-      }),
-      ChatForm: new ChatForm(),
+      AddFileDropDown: addFileDropDown,
+      AddButton: addButton,
+    })
+
+    if (isActive && chatId) {
+      this.connectToChat(chatId)
+    }
+  }
+
+  override componentDidUpdate(
+    oldProps: ChatProps,
+    newProps: ChatProps,
+  ): boolean {
+    const chatChanged = newProps.chatId && newProps.chatId !== oldProps.chatId
+
+    if (chatChanged) {
+      this.setProps({ chat: true })
+
+      this.children.ChatTitle.setProps({ chatId: newProps.chatId })
+
+      if (newProps.chatId) {
+        this.connectToChat(newProps.chatId)
+      }
+    }
+
+    return true
+  }
+
+  private toggleDropDown(): void {
+    this.isFileDropDownOpen = !this.isFileDropDownOpen
+    this.children.AddFileDropDown.setProps({
+      isOpen: this.isFileDropDownOpen,
     })
   }
 
-  public render(): string {
+  private async connectToChat(chatId: string): Promise<void> {
+    this.chatWS?.close()
+    this.unsubscribe?.()
+
+    this.chatWS = new ChatWebSocket(chatId)
+
+    this.children.ChatForm.setProps({ chatWS: this.chatWS })
+    this.children.AddFileDropDown.setProps({ chatWS: this.chatWS })
+
+    this.unsubscribe = this.chatWS.store.subscribe((state) => {
+      const currentUserId = userStore.getState().id
+      const messages = state.messages
+        .map((msg: ChatMessage) => {
+          try {
+            return new Message({
+              type: msg.type,
+              owner: msg.user_id === currentUserId ? 'me' : 'partner',
+              text: msg.content,
+              file: msg.file,
+              timeStamp: msg.time,
+            })
+          } catch (err) {
+            console.error('[Message render error]', err)
+            return null
+          }
+        })
+        .filter((msg): msg is Message => msg !== null) as Block[]
+
+      this.children.Messages = messages
+      this.forceUpdate()
+    })
+
+    await chatStore.fetchChatUsers(chatId)
+
+    this.children.ChatTitle.setProps({ chatId })
+  }
+
+  override render(): string {
     return `
-    {{#if chat }}
-    {{{ ChatTitle }}}
-    <div class="chat-section__chat-container">
-        <div class="chat-section__message-list">
-            {{#each Messages}}
-  {{{ this }}}
-{{/each}}
+      {{#if chat}}
+        {{{ ChatTitle }}}
+        <div class="chat-section__chat-container">
+          <div class="chat-section__message-list">
+            {{{ Messages }}}
+          </div>
+          {{{ AddFileDropDown }}}
+          <div class="chat-section__form-container">
+            {{{ AddButton }}}
+            {{{ ChatForm }}}
+          </div>
         </div>
-   {{{ ChatForm }}}
-    </div>
-    {{else }}
-      {{{ EmptyChat }}}
-    {{/if }}
+      {{else}}
+        {{{ EmptyChat }}}
+      {{/if}}
     `
   }
 }

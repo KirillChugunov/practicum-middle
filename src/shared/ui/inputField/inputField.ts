@@ -4,14 +4,15 @@ import EventBus from '@/shared/core/eventBus/eventBus.ts'
 
 type TInputFieldProps = {
   label: string
-  placeHolder?: string
+  value?: string
   name: string
   type: string
   disabled?: boolean
-  onBlur: (e: Event) => void
+  onBlur?: (e: Event) => void
   eventBus?: EventBus<'submit'>
   profile?: boolean
   className?: string
+  placeHolder?: string
 }
 
 export default class InputField extends Block {
@@ -19,26 +20,47 @@ export default class InputField extends Block {
     super('div', {
       ...props,
       className: props.profile ? 'profile_item_container' : 'input',
-      label: props.label,
       error: '',
       Input: new Input({
         events: {
           blur: props.onBlur,
         },
-        placeholder: props.placeHolder,
         name: props.name,
         disabled: props.disabled ?? false,
         className: props.profile ? 'profile_input' : 'input__element',
+        value: props.value,
+        placeholder: props.placeHolder,
       }),
       type: props.type,
     })
 
     props.eventBus?.on('submit', () => {
       const inputElement = this.getContent()?.querySelector('input')
-      if (inputElement) {
+      if (inputElement && props.onBlur) {
         props.onBlur({ target: inputElement } as unknown as Event)
       }
     })
+  }
+
+  override componentDidUpdate(
+    oldProps: TInputFieldProps,
+    newProps: TInputFieldProps,
+  ): boolean {
+    if (
+      this.children.Input instanceof Block &&
+      newProps.value !== undefined &&
+      newProps.value !== oldProps.value
+    ) {
+      this.children.Input.setProps({
+        value: newProps.value,
+        attrs: {
+          ...this.children.Input.props.attrs,
+          value: newProps.value,
+        },
+      });
+    }
+
+    return true;
   }
 
   public render(): string {
