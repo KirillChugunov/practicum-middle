@@ -28,17 +28,19 @@ export const initRouter = () => {
   const originalGetRoute = router.getRoute.bind(router)
 
   router.getRoute = (pathname: string) => {
-    if (pathname === '/') {
-      return undefined
-    }
-
     return originalGetRoute(pathname) || originalGetRoute('/404')
   }
 
   const initialPath = window.location.pathname
   const isAuth = isAuthenticated()
 
-  if (isAuth && publicRoutes.includes(initialPath)) {
+  if (initialPath === '/') {
+    if (isAuth) {
+      router.go('/messenger')
+    } else {
+      router.go('/login')
+    }
+  } else if (isAuth && publicRoutes.includes(initialPath)) {
     router.go('/messenger')
   } else if (!isAuth && !publicRoutes.includes(initialPath)) {
     router.go('/login')
