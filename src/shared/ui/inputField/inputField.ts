@@ -43,23 +43,26 @@ export default class InputField extends Block {
   }
 
   override componentDidUpdate(
-    _: TInputFieldProps,
+    oldProps: TInputFieldProps,
     newProps: TInputFieldProps,
   ): boolean {
-    if (this.children.Input instanceof Block) {
-      const value = newProps.value ?? ''
-
+    if (
+      this.children.Input instanceof Block &&
+      newProps.value !== undefined &&
+      newProps.value !== oldProps.value
+    ) {
       this.children.Input.setProps({
-        value,
+        value: newProps.value,
         attrs: {
           ...this.children.Input.props.attrs,
-          value,
+          value: newProps.value,
         },
-      })
+      });
     }
 
-    return true
+    return true;
   }
+
   public render(): string {
     return `
       {{#if profile }}
