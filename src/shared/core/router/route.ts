@@ -47,8 +47,8 @@ export class Route {
 
   render(routerInstance: RouterInstance, pathname: string): void {
     if (this._guard && !this._guard()) {
-      if (pathname !== '/login') {
-        routerInstance.go('/login')
+      if (pathname !== '/') {
+        routerInstance.go('/')
       }
       return
     }

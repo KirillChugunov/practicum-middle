@@ -2,12 +2,12 @@ import * as Pages from '@/pages'
 import router from '@/shared/core/router/router.ts'
 import userStore from '@/store/userStore/userStore.ts'
 
-const publicRoutes = ['/login', '/sign-up']
+const publicRoutes = ['/', '/sign-up']
 const isAuthenticated = () => userStore.getState().isAuth
 
 export const initRouter = () => {
   const pages = {
-    '/login': Pages.LoginPage,
+    '/': Pages.LoginPage,
     '/sign-up': Pages.SingInPage,
     '/messenger': Pages.ChatListPage,
     '/settings': Pages.UserProfileInfoPage,

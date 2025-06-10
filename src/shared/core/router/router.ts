@@ -1,6 +1,5 @@
 import { Route } from './route'
 import { Block } from '@shared'
-import userStore from '@/store/userStore/userStore.ts'
 
 type BlockConstructor = new () => Block
 
@@ -28,11 +27,7 @@ export class Router {
     Router.__instance = this
   }
 
-  use(
-    pathname: string,
-    block: BlockConstructor,
-    options: RouteOptions = {},
-  ): this {
+  use(pathname: string, block: BlockConstructor, options: RouteOptions = {}): this {
     const route = new Route(pathname, block, {
       rootQuery: this._rootQuery,
       guard: options.guard,
@@ -51,41 +46,22 @@ export class Router {
   }
 
   private _onRoute(pathname: string): void {
-    const isAuth = userStore.getState().isAuth
-    const publicPaths = ['/login', '/sign-up']
-
-    if (pathname === '/') {
-      const target = isAuth ? '/messenger' : '/login'
-      if (window.location.pathname !== target) {
-        this.go(target)
-      }
-      return
-    }
-
     let route = this.getRoute(pathname)
 
     if (!route) {
       const fallback = this.getRoute('/404')
-      if (fallback && window.location.pathname !== '/404') {
+      if (fallback && pathname !== '/404') {
         this.go('/404')
       }
       return
     }
 
     const guard = route.getGuard?.()
-    const isProtected = !!guard
     const isAllowed = guard ? guard() : true
 
-    if (isProtected && !isAllowed) {
-      if (pathname !== '/login' && window.location.pathname !== '/login') {
-        this.go('/login')
-      }
-      return
-    }
-
-    if (!isProtected && isAllowed && publicPaths.includes(pathname)) {
-      if (pathname !== '/messenger' && window.location.pathname !== '/messenger') {
-        this.go('/messenger')
+    if (guard && !isAllowed) {
+      if (pathname !== '/' && window.location.pathname !== '/') {
+        this.go('/')
       }
       return
     }
@@ -99,7 +75,7 @@ export class Router {
   }
 
   go(pathname: string): void {
-    if (window.location.pathname === pathname) return
+    if (this._currentRoute?.match(pathname)) return
     this.history.pushState({}, '', pathname)
     this._onRoute(pathname)
   }

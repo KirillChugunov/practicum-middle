@@ -73,7 +73,7 @@ class UserStore extends Store<TUser> {
       const res = await httpTransport.post(apiConfig.logout)
       if (res.status === 200 || res.status === 201) {
         this.resetUser()
-        router.go('/login')
+        router.go('/')
       } else {
         errorToast.showToast(`Выход не удался: ${res.status}`)
       }
