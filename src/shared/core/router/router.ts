@@ -1,5 +1,6 @@
 import { Route } from './route'
 import { Block } from '@shared'
+import userStore from '@/store/userStore/userStore.ts'
 
 type BlockConstructor = new () => Block
 
@@ -18,11 +19,11 @@ export class Router {
     if (Router.__instance) {
       return Router.__instance
     }
+
     this._rootQuery = rootQuery
     this.routes = []
     this.history = window.history
     this._currentRoute = null
-    this._rootQuery = rootQuery
 
     Router.__instance = this
   }
@@ -42,16 +43,28 @@ export class Router {
   }
 
   start(): void {
-    window.onpopstate = (() => {
+    window.onpopstate = () => {
       this._onRoute(window.location.pathname)
-    }).bind(this)
+    }
 
     this._onRoute(window.location.pathname)
   }
 
   private _onRoute(pathname: string): void {
-    const route = this.getRoute(pathname)
-    if (!route) return
+    const isAuth = userStore.getState().isAuth
+    const publicPaths = ['/login', '/sign-up']
+
+    if (pathname === '/') {
+      this.go(isAuth ? '/messenger' : '/login')
+      return
+    }
+
+    let route = this.getRoute(pathname)
+
+    if (!route) {
+      route = this.getRoute('/404')
+      if (!route) return
+    }
 
     const guard = route.getGuard?.()
     const isProtected = !!guard
@@ -64,7 +77,7 @@ export class Router {
       return
     }
 
-    if (!isProtected && isAllowed && pathname !== '/messenger') {
+    if (!isProtected && isAllowed && publicPaths.includes(pathname) && pathname !== '/messenger') {
       this.go('/messenger')
       return
     }
@@ -78,7 +91,7 @@ export class Router {
   }
 
   go(pathname: string): void {
-    if (window.location.pathname === pathname) return // 🛑 избегаем зацикливания
+    if (window.location.pathname === pathname) return
     this.history.pushState({}, '', pathname)
     this._onRoute(pathname)
   }

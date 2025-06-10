@@ -3,7 +3,6 @@ import router from '@/shared/core/router/router.ts'
 import userStore from '@/store/userStore/userStore.ts'
 
 const publicRoutes = ['/login', '/sign-up']
-
 const isAuthenticated = () => userStore.getState().isAuth
 
 export const initRouter = () => {
@@ -25,26 +24,5 @@ export const initRouter = () => {
     })
   }
 
-  const originalGetRoute = router.getRoute.bind(router)
-
-  router.getRoute = (pathname: string) => {
-    return originalGetRoute(pathname) || originalGetRoute('/404')
-  }
-
-  const initialPath = window.location.pathname
-  const isAuth = isAuthenticated()
-
-  if (initialPath === '/') {
-    if (isAuth) {
-      router.go('/messenger')
-    } else {
-      router.go('/login')
-    }
-  } else if (isAuth && publicRoutes.includes(initialPath)) {
-    router.go('/messenger')
-  } else if (!isAuth && !publicRoutes.includes(initialPath)) {
-    router.go('/login')
-  } else {
-    router.start()
-  }
+  router.start()
 }
