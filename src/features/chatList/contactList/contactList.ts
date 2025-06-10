@@ -80,7 +80,7 @@ export default class ContactList extends Block<
 
   override render(): string {
     return `
-      <a class="contact-list__profile-link" href="/userprofile">
+      <a class="contact-list__profile-link" href="/settings">
         <small>Профиль ></small>
       </a>
       <div class="contact-list__search">

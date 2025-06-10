@@ -118,7 +118,7 @@ export default class SignIn extends Block<TSignInProps, TSignInChildren> {
       const res = await httpTransport.post(apiConfig.auth, { data: formState })
 
       if (res.status === 200 || res.status === 201) {
-        router.go('/chatlist')
+        router.go('/messenger')
       } else {
         console.error('Регистрация не удалась:', res.status, res.responseText)
       }

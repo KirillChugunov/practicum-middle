@@ -49,7 +49,7 @@ export default class Login extends Block<TLoginProps, TLoginChildren> {
         await formManager.formSubmit(e, async () => {
           const { formState } = formManager.getState()
           await userStore.login(formState)
-          router.go('/chatlist')
+          router.go('/messenger')
         })
       },
     })
@@ -60,7 +60,7 @@ export default class Login extends Block<TLoginProps, TLoginChildren> {
       type: 'link',
       onClick: (e: Event) => {
         e.preventDefault()
-        router.go('/signin')
+        router.go('/sign-up')
       },
     })
 

@@ -2,19 +2,18 @@ import * as Pages from '@/pages'
 import router from '@/shared/core/router/router.ts'
 import userStore from '@/store/userStore/userStore.ts'
 
-const publicRoutes = ['/login', '/signin']
+const publicRoutes = ['/login', '/sign-up']
 
 const isAuthenticated = () => userStore.getState().isAuth
 
 export const initRouter = () => {
   const pages = {
-    '/': Pages.LoginPage,
     '/login': Pages.LoginPage,
-    '/signin': Pages.SingInPage,
-    '/chatlist': Pages.ChatListPage,
-    '/userprofile': Pages.UserProfileInfoPage,
-    '/userprofileedit': Pages.UserProfileEditPage,
-    '/userprofilepasswordedit': Pages.UserProfilePasswordEditPage,
+    '/sign-up': Pages.SingInPage,
+    '/messenger': Pages.ChatListPage,
+    '/settings': Pages.UserProfileInfoPage,
+    '/settings/edit': Pages.UserProfileEditPage,
+    '/settings/password': Pages.UserProfilePasswordEditPage,
     '/error': Pages.Error5xxPage,
     '/404': Pages.NotFoundPage,
   }
@@ -35,7 +34,7 @@ export const initRouter = () => {
   const isAuth = isAuthenticated()
 
   if (isAuth && publicRoutes.includes(initialPath)) {
-    router.go('/chatlist')
+    router.go('/messenger')
   } else if (!isAuth && !publicRoutes.includes(initialPath)) {
     router.go('/login')
   } else {

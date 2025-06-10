@@ -59,7 +59,7 @@ class UserStore extends Store<TUser> {
       if (res.status === 200 || res.status === 201) {
         await this.loadUser()
         this.setState({ ...this.getState(), isAuth: true })
-        router.go('/chatlist')
+        router.go('/messenger')
       } else {
         errorToast.showToast(`Авторизация не удалась: ${res.status}`)
       }

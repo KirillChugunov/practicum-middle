@@ -120,8 +120,8 @@ export default class UserProfilePreview extends Block {
           {{{ Phone }}}
         </form>
         <section class="user-profile__grid user_profile__actions">
-          <div class="user-profile__item"><a href="/userprofileedit">Изменить данные</a></div>
-          <div class="user-profile__item"><a href="/userprofilepasswordedit">Изменить пароль</a></div>
+          <div class="user-profile__item"><a href="/settings/edit">Изменить данные</a></div>
+          <div class="user-profile__item"><a href="/settings/password">Изменить пароль</a></div>
           <div class="user-profile__item">
             {{{ ButtonLogout }}}
           </div>
