@@ -1,8 +1,10 @@
 .contact-list {
-  width: 310px;
+  min-width: 310px;
   background: $primary-background;
   border-right: solid 1px $border-primary;
   padding: 10px;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 
 .contact-list__profile-link {
@@ -13,7 +15,7 @@
 
 .contact-list__search-input {
   border-radius: 5px;
-  width: 290px;
+  width: 260px;
   height: 32px;
   background: #efefef;
   border: none;
@@ -30,4 +32,3 @@
   font-weight: 500;
   line-height: 15px;
 }
-

@@ -5,6 +5,9 @@ type TIconButton = {
   buttonIcon: string
   alt: string
   direction?: string
+  attrs?: {
+    type: string
+  }
 }
 
 export default class IconButton extends Block {
@@ -14,6 +17,9 @@ export default class IconButton extends Block {
       className: 'icon-button',
       events: {
         click: props.onClick,
+      },
+      attrs: {
+        ...props.attrs,
       },
     })
   }

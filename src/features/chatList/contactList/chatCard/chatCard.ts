@@ -1,32 +1,48 @@
 import { Block } from '@shared'
 import { ChatAvatar } from '@/features'
 
-type TChatCard = {
-  userName: string
-  avatar: string
-  lastMessagePreview: {
-    owner: string
-    message: string
-    timeStamp: string
-  }
-  newMessageCount: string
+type TLastMessagePreview = {
+  owner?: string
+  message?: string
+  timeStamp?: string
 }
 
-export default class ChatCard extends Block {
-  constructor(props: TChatCard) {
+type TChatCardProps = {
+  userName?: string
+  avatar: string | null
+  lastMessagePreview?: TLastMessagePreview
+  newMessageCount?: string
+  chatId: string
+  onClick: () => void
+}
+
+type TChatCardChildren = {
+  ChatAvatar?: ChatAvatar
+}
+
+export default class ChatCard extends Block<TChatCardProps, TChatCardChildren> {
+  constructor(props: TChatCardProps) {
+    const children: TChatCardChildren = {}
+
+    if (props.avatar) {
+      children.ChatAvatar = new ChatAvatar({
+        isTitle: false,
+        avatar: props.avatar,
+        chatId: props.chatId,
+      })
+    }
+
     super('div', {
       ...props,
+      ...children,
       className: 'chatCard',
-      ChatAvatar: new ChatAvatar({
-        avatar: props.avatar,
-      }),
-      userName: props.userName,
-      lastMessagePreview: props.lastMessagePreview,
-      newMessageCount: props.newMessageCount,
+      events: {
+        click: props.onClick,
+      },
     })
   }
 
-  public render(): string {
+  render(): string {
     return `
       {{{ ChatAvatar }}}
       <div class="chatCard__info">
@@ -39,7 +55,9 @@ export default class ChatCard extends Block {
       <div class="chatCard__notifications">
         <small>{{lastMessagePreview.timeStamp}}</small>
         <div class="chatCard__notification-container">
-          <small class="chatCard__notification-text">{{newMessageCount}}</small>
+          <small class="chatCard__notification-text">
+            {{newMessageCount}}
+          </small>
         </div>
       </div>
     `

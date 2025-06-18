@@ -1,0 +1,17 @@
+.error-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #e53e3e;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px color-mix(in srgb, black 20%, transparent);
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+}
+
+.error-toast.hidden {
+  opacity: 0;
+  pointer-events: none;
+}

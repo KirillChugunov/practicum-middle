@@ -1,5 +1,6 @@
 .chatCard {
   display: flex;
+  gap: 5px;
   padding: 12px 0;
   fill: #efefef;
   border-top: solid 1px rgb(234 234 234 / 100%);
@@ -27,6 +28,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: flex-end;
+  gap: 3px;
 }
 
 .chatCard__notification-container {

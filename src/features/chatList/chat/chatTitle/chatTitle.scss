@@ -2,6 +2,7 @@
   padding: 10px 0;
   border-bottom: solid 1px $border-primary;
   display: flex;
+  gap: 5px;
   align-items: center;
 }
 
@@ -17,4 +18,10 @@
   padding: 0 20px;
   display: flex;
   flex-direction: column;
+}
+
+.chat-section__avatars {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
