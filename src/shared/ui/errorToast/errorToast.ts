@@ -1,4 +1,4 @@
-import { Block } from '@shared'
+import Block from '@/shared/core/block/block.ts'
 
 export type TErrorToastProps = {
   message: string
