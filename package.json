@@ -2,7 +2,7 @@
   "name": "practicum-middle",
   "private": true,
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.4.0",
   "scripts": {
     "test": "jest",
     "dev": "vite",
