@@ -18,6 +18,7 @@ export default [
       'valid-jsdoc': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
       '@typescript-eslint/no-unused-expressions': 'off',
+      'eol-last': ['error', 'always'],
     },
   },
 ]
