@@ -1,5 +1,6 @@
 import { Block, FormManager, IconButton, Input } from '@shared'
 import { ChatWebSocket } from '@/shared/core/ws/ws.ts'
+import arrowIcon from '@/assets/icons/arrow.svg'
 
 type ChatFormProps = {
   chatWS?: ChatWebSocket
@@ -31,7 +32,7 @@ export default class ChatForm extends Block<ChatFormProps, ChatFormChildren> {
     })
 
     const SentButton = new IconButton({
-      buttonIcon: './src/assets/icons/arrow.svg',
+      buttonIcon: arrowIcon,
       alt: 'Send icon',
       direction: 'right',
       attrs: {

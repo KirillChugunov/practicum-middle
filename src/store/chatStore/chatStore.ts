@@ -111,7 +111,8 @@ class ChatStore extends Store<TChatStore> {
 
       return normalizedUsers
     } catch (e) {
-      errorToast.showToast('Ошибка при загрузке пользователей чата')
+      const message = e instanceof Error ? e.message : String(e);
+      errorToast.showToast(`Ошибка при загрузке пользователей чата: ${message}`)
       return []
     }
   }
@@ -121,7 +122,8 @@ class ChatStore extends Store<TChatStore> {
       await httpTransport.put(apiConfig.updateChatAvatar, { data: formData })
       await this.fetchChats()
     } catch (e) {
-      errorToast.showToast('Ошибка при обновлении аватара чата')
+      const message = e instanceof Error ? e.message : String(e);
+      errorToast.showToast(`Ошибка при обновлении аватара чата: ${message}`)
     }
   }
 
@@ -131,7 +133,8 @@ class ChatStore extends Store<TChatStore> {
       const { token } = JSON.parse(res.responseText)
       return token
     } catch (e) {
-      errorToast.showToast('Ошибка при получении токена')
+      const message = e instanceof Error ? e.message : String(e);
+      errorToast.showToast(`Ошибка при получении токена: ${message}`)
       return null
     }
   }
@@ -168,8 +171,8 @@ class ChatStore extends Store<TChatStore> {
       })
 
       return JSON.parse(res.responseText)
-    } catch (e: any) {
-      const msg = e?.message ?? 'Ошибка поиска пользователя'
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Ошибка поиска пользователя'
       this.setError(msg)
       errorToast.showToast(msg)
       return null
@@ -197,7 +200,8 @@ class ChatStore extends Store<TChatStore> {
 
       return JSON.parse(res.responseText)
     } catch (e) {
-      errorToast.showToast('Ошибка при загрузке файла')
+      const message = e instanceof Error ? e.message : String(e);
+      errorToast.showToast(`Ошибка при загрузке файла: ${message}`)
       return null
     }
   }
@@ -218,7 +222,8 @@ class ChatStore extends Store<TChatStore> {
       this.updateUnreadCount(chatId)
       return unread_count
     } catch (e) {
-      errorToast.showToast('Ошибка при получении количества новых сообщений')
+      const message = e instanceof Error ? e.message : String(e);
+      errorToast.showToast(`Ошибка при получении количества новых сообщений: ${message}`)
       return null
     }
   }
@@ -236,7 +241,8 @@ class ChatStore extends Store<TChatStore> {
       })
       await this.fetchChatUsers(String(chatId))
     } catch (e) {
-      errorToast.showToast('Ошибка при добавлении пользователей')
+      const message = e instanceof Error ? e.message : String(e);
+      errorToast.showToast(`Ошибка при добавлении пользователей: ${message}`)
     }
   }
 
@@ -253,7 +259,8 @@ class ChatStore extends Store<TChatStore> {
       })
       await this.fetchChatUsers(String(chatId))
     } catch (e) {
-      errorToast.showToast('Ошибка при удалении пользователей')
+      const message = e instanceof Error ? e.message : String(e);
+      errorToast.showToast(`Ошибка при удалении пользователей: ${message}`)
     }
   }
 }
