@@ -1,9 +1,9 @@
-const register = require('@babel/register').default;
+import register from '@babel/register';
 
 register({
   extensions: ['.ts', '.tsx', '.js', '.jsx'],
-  only: [/src/, /test/], // указываем явно, что обрабатывать
+  only: [/src/, /test/],
   ignore: [/node_modules/],
-  babelrc: false, // чтобы не мешали .babelrc
-  configFile: './babel.config.js'
+  babelrc: false,
+  configFile: './babel.config.js',
 });

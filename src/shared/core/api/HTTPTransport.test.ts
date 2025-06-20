@@ -25,13 +25,13 @@ describe('HTTPTransport', () => {
       responseText: '{}',
     }
 
-    // @ts-ignore
+    // @ts-expect-error
     global.XMLHttpRequest = jest.fn(() => mockXHR)
   })
 
   test('GET-запрос с query-параметрами', async () => {
     const promise = httpTransport.get('/test', { data: { a: '1' } })
-    // @ts-ignore
+    // @ts-expect-error
     mockXHR.onload?.call(mockXHR)
     await expect(promise).resolves.toBe(mockXHR)
     expect(xhrOpenMock).toHaveBeenCalledWith('GET', '/test?a=1')
@@ -40,7 +40,7 @@ describe('HTTPTransport', () => {
 
   test('POST-запрос с JSON-данными', async () => {
     const promise = httpTransport.post('/test', { data: { b: '2' } })
-    // @ts-ignore
+    // @ts-expect-error
     mockXHR.onload?.call(mockXHR)
     await expect(promise).resolves.toBe(mockXHR)
     expect(setRequestHeaderMock).toHaveBeenCalledWith('Content-Type', 'application/json')
@@ -51,7 +51,7 @@ describe('HTTPTransport', () => {
     const formData = new FormData()
     formData.append('key', 'value')
     const promise = httpTransport.put('/upload', { data: formData })
-    // @ts-ignore
+    // @ts-expect-error
     mockXHR.onload?.call(mockXHR)
     await expect(promise).resolves.toBe(mockXHR)
     expect(setRequestHeaderMock).not.toHaveBeenCalledWith('Content-Type', expect.any(String))
@@ -60,21 +60,21 @@ describe('HTTPTransport', () => {
 
   test('Отклонение по таймауту', async () => {
     const promise = httpTransport.delete('/timeout')
-    // @ts-ignore
+    // @ts-expect-error
     mockXHR.ontimeout?.call(mockXHR)
     await expect(promise).rejects.toThrow('Request timed out')
   })
 
   test('Отклонение при прерывании запроса', async () => {
     const promise = httpTransport.get('/abort')
-    // @ts-ignore
+    // @ts-expect-error
     mockXHR.onabort?.call(mockXHR)
     await expect(promise).rejects.toThrow('Request aborted')
   })
 
   test('Отклонение при ошибке запроса', async () => {
     const promise = httpTransport.get('/error')
-    // @ts-ignore
+    // @ts-expect-error
     mockXHR.onerror?.call(mockXHR)
     await expect(promise).rejects.toThrow('Request error')
   })

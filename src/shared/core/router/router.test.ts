@@ -47,7 +47,7 @@ describe('Router — упрощённо, без синглтона', () => {
 
   test('не пускает неавторизованных на защищённый маршрут', async () => {
     const original = userStore.getState;
-    // @ts-ignore
+    // @ts-expect-error
     userStore.getState = () => ({ isAuth: false });
 
     const root = document.createElement('div');

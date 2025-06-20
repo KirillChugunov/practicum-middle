@@ -22,7 +22,7 @@ describe('Block', () => {
   })
 
   test('должен обновлять props через setProps', () => {
-    const spy = jest.spyOn(block as any, '_render')
+    const spy = jest.spyOn(block as unknown as { _render(): void }, '_render')
     block.setProps({ value: '123' })
     expect(block.props.value).toBe('123')
     expect(spy).toHaveBeenCalled()

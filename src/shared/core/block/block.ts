@@ -127,7 +127,7 @@ export default class Block<
     this.componentDidMount()
   }
 
-  componentDidMount(_oldProps?: TProps): void {}
+  componentDidMount(): void {}
 
   dispatchComponentDidMount(): void {
     this.eventBus().emit(Block.EVENTS.FLOW_CDM)
@@ -199,12 +199,12 @@ export default class Block<
 
     Object.entries(this.children).forEach(([key, child]) => {
       if (Array.isArray(child)) {
-        // @ts-ignore
+        // @ts-expect-error
         propsAndStubs[key] = child
           .map((c) => `<div data-id="${c._id}"></div>`)
           .join('')
       } else {
-        // @ts-ignore
+        // @ts-expect-error
         propsAndStubs[key] = `<div data-id="${child._id}"></div>`
       }
     })

@@ -1,13 +1,13 @@
-export function throttle<T extends (...args: any[]) => void>(
+export function throttle<T extends (...args: Parameters<T>) => ReturnType<T>>(
   fn: T,
   delay: number,
-): T {
+): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null = null
-  return function (this: any, ...args: any[]) {
+  return function (...args: Parameters<T>) {
     if (timeout) return
     timeout = setTimeout(() => {
-      fn.apply(this, args)
+      fn(...args)
       timeout = null
     }, delay)
-  } as T
+  }
 }

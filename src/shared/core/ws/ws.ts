@@ -90,7 +90,8 @@ export class ChatWebSocket {
       this.socket.addEventListener('close', () => this.onClose())
       this.socket.addEventListener('error', (e: Event) => this.onError(e))
     } catch (err) {
-      this.store.setState({ error: 'Token fetch failed', isLoading: false })
+      const message = err instanceof Error ? err.message : String(err);
+      this.store.setState({ error: `Token fetch failed: ${message}`, isLoading: false })
     }
   }
 
