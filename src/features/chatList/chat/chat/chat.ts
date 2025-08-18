@@ -10,6 +10,7 @@ import { ChatMessage, ChatWebSocket } from '@/shared/core/ws/ws.ts'
 import userStore from '@/store/userStore/userStore.ts'
 import chatStore from '@/store/chatStore/chatStore.ts'
 import { errorToast } from '@/shared/ui/errorToast/errorToast.ts'
+import buttonIncon from '@/assets/icons/clip.svg'
 
 type ChatProps = {
   chatId: string | null
@@ -40,7 +41,7 @@ export default class Chat extends Block<ChatProps, ChatChildren> {
     })
 
     const addButton = new IconButton({
-      buttonIcon: './src/assets/icons/clip.svg',
+      buttonIcon: buttonIncon,
       alt: 'Attachment icon',
       onClick: (e: Event) => {
         errorToast.showToast('Что-то пошло не так 😢')

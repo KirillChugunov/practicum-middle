@@ -3,6 +3,7 @@ import { ChatAvatar } from '@/features'
 import FriendControlDropDown from '@/features/chatList/chat/friendControlsDropDown/friendControlDropDown.ts'
 import chatStore from '@/store/chatStore/chatStore.ts'
 import defaultChatAvatar from '@/assets/icons/chatListAvatar.svg'
+import moreIcon from '@/assets/icons/moreIcon.svg'
 
 type TChatTitleProps = {
   chatId: string | null
@@ -30,7 +31,7 @@ export default class ChatTitle extends Block<
     })
 
     const moreButton = new IconButton({
-      buttonIcon: './src/assets/icons/moreIcon.svg',
+      buttonIcon: moreIcon,
       alt: 'More icon',
       onClick: (e: Event): void => {
         e.preventDefault()
